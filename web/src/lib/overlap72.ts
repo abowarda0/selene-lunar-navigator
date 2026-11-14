@@ -126,3 +126,23 @@ export function overlapWhy(s: SlipOverlap, mode: EarthMode): string | null {
     ? `From ${at(main.span[0])} the late date loses ${len} h of overlap: ${words} then.`
     : `From ${at(main.span[0])} the late date gains ${len} h of overlap, while on the planned date ${words}.`;
 }
+
+/**
+ * Plain words for the cases that make the overlap look "always the same": one body never changes during the
+ * 72 h on any of the given landings, so the overlap simply follows the other one.
+ */
+export function steadyNote(list: readonly Overlap72[], mode: EarthMode): string | null {
+  const full = (xs: readonly Span[], o: Overlap72) => spanHours(xs) >= o.hours - 0.1;
+  const none = (xs: readonly Span[]) => spanHours(xs) <= 0.1;
+  const earthWord = mode === "view" ? "Earth stays in line of sight" : "a NASA dish can reach the lander";
+  if (list.every((o) => none(o.earth))) {
+    return mode === "view"
+      ? "Earth stays hidden behind the terrain for all 72 h here, so there is no power + comms overlap at all: this site would need a relay satellite."
+      : "No NASA dish can reach the lander in these 72 h, so there is no power + comms overlap: this site would need a relay satellite.";
+  }
+  if (list.every((o) => full(o.earth, o))) {
+    return `At this site ${earthWord} for all ${FIRST_HOURS} h, so the overlap is set by the Sun alone. Sites where Earth can drop out of sight, such as Malapert Massif, show Earth-caused losses too.`;
+  }
+  if (list.every((o) => full(o.sun, o))) return `The Sun stays up for all ${FIRST_HOURS} h, so here the overlap is set by Earth alone.`;
+  return null;
+}

@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactElement } from "react";
 import type { YearData } from "../api/types";
 import { useWidth } from "../hooks";
-import { compareSlip, FIRST_HOURS, overlapFirst, overlapHeadline, overlapWhy, spanHours, type Cause, type EarthMode, type Overlap72, type Span } from "../lib/overlap72";
+import { compareSlip, FIRST_HOURS, overlapFirst, overlapHeadline, overlapWhy, spanHours, steadyNote, type Cause, type EarthMode, type Overlap72, type Span } from "../lib/overlap72";
 
 interface Props {
   readonly year: YearData;
@@ -92,6 +92,7 @@ export function SlipOverlap({ year, plannedStart, lateStart, delayLabel }: Props
 
       <p className={`so-headline ${s.deltaH < -0.05 ? "loss" : s.deltaH > 0.05 ? "gain" : ""}`} role="status">{overlapHeadline(delayLabel, s, mode)}</p>
       {why && <p className="so-why"><b>Why:</b> {why}</p>}
+      {steadyNote([s.planned, s.late], mode) && <p className="so-note" role="note">{steadyNote([s.planned, s.late], mode)}</p>}
 
       <dl className="so-figs">
         <div><dt>Planned</dt><dd className="mono">{h1(a)} h</dd></div>
@@ -172,6 +173,7 @@ export function OverlapStart({ year, plannedStart, onPickDelay }: { readonly yea
         </div>
       </div>
       <p className="so-headline">{h1(a)} h of power + comms overlap ({mode === "view" ? "Sun and Earth both in view" : "Sun and a DSN link together"}) in the first {FIRST_HOURS} h.</p>
+      {steadyNote([o], mode) && <p className="so-note" role="note">{steadyNote([o], mode)}</p>}
       <dl className="so-figs">
         <div><dt>This plan</dt><dd className="mono">{h1(a)} h</dd></div>
         {other && <div className="so-other"><dt>With {mode === "view" ? "DSN two-way link" : "Earth in view"}</dt><dd className="mono">{h1(spanHours(other.both))} h</dd></div>}

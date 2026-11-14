@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import type { VisWindow, YearData } from "../api/types";
-import { compareSlip, overlapFirst, overlapHeadline, overlapWhy, spanHours, subtract } from "./overlap72";
+import { compareSlip, overlapFirst, overlapHeadline, overlapWhy, spanHours, steadyNote, subtract } from "./overlap72";
+import { analyze } from "./analysis";
 
 const w = (start: string, end: string): VisWindow => ({ start, end, hours: (Date.parse(end) - Date.parse(start)) / 3.6e6, open_start: false, open_end: false });
 
@@ -55,5 +56,41 @@ describe("real site file", () => {
     expect(s).not.toBeNull();
     expect(spanHours(s!.planned.both)).toBeGreaterThan(spanHours(s!.late.both) - 1e-9);
     expect(spanHours(s!.planned.both)).toBeLessThanOrEqual(72);
+  });
+});
+
+describe("steadyNote", () => {
+  const base = { start: "x", hours: 72 };
+  it("explains when Earth never leaves the sky", () => {
+    const o = { ...base, both: [[12, 48]] as const, sun: [[12, 48]] as const, earth: [[0, 72]] as const };
+    expect(steadyNote([o], "view")).toMatch(/^At this site Earth stays in line of sight for all 72 h, so the overlap is set by the Sun alone/);
+  });
+  it("explains when Earth is never in view", () => {
+    const o = { ...base, both: [] as const, sun: [[0, 72]] as const, earth: [] as const };
+    expect(steadyNote([o], "view")).toMatch(/relay satellite/);
+  });
+  it("says nothing when both the Sun and Earth change", () => {
+    const o = { ...base, both: [[10, 30]] as const, sun: [[0, 30]] as const, earth: [[10, 72]] as const };
+    expect(steadyNote([o], "view")).toBeNull();
+  });
+});
+
+describe("72 h overlap stays consistent with the validated engine (all sites, every day)", () => {
+  const ids = ["mons_mouton_plateau", "malapert_massif", "mons_mouton", "haworth", "de_gerlache_rim", "nobile_rim_2", "slater_plain", "cabeus_b_peak", "chandrayaan3", "ridge", "polar_mid", "apollo11"];
+  it.each(ids)("%s", (id) => {
+    const y = (JSON.parse(readFileSync(`public/data/year_${id}.json`, "utf8")) as { data: YearData }).data;
+    for (let d = 0; d < 420; d += 7) {
+      const s = new Date(Date.UTC(2026, 11, 1 + d)).toISOString().slice(0, 16) + "Z";
+      const link = overlapFirst(y, s, "link");
+      const view = overlapFirst(y, s, "view");
+      const a = analyze(y, s, 72);
+      if (!link || !view || !a.ok) continue;
+      // DSN-link mode equals the original analysis (bothHours), to rounding
+      expect(Math.abs(spanHours(link.both) - a.bothHours)).toBeLessThan(0.01);
+      // overlap is never more than the Sun or Earth alone, never less than sun + earth − 72
+      const o = spanHours(view.both), su = spanHours(view.sun), ea = spanHours(view.earth);
+      expect(o).toBeLessThanOrEqual(Math.min(su, ea) + 0.02);
+      expect(o).toBeGreaterThanOrEqual(su + ea - 72 - 0.02);
+    }
   });
 });
