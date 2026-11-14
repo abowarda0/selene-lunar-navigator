@@ -147,3 +147,13 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; gap: 8
 .hero2-right .peek figcaption { min-width: 0; gap: 4px; }
 .hero2-right .peek figcaption b { font-size: 15px; white-space: nowrap; }
 .hero2-right .peek figcaption .src, .hero2-right .peek figcaption .mono { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Verdict key: what Good / Marginal / Poor mean */
+.vkey { display: grid; gap: 8px; margin-top: 10px; }
+.vkey ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.vkey li { display: grid; gap: 6px; align-content: start; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--bg-card); }
+.vkey-t { font-size: 13px; line-height: 1.45; color: var(--text-secondary); }
+.vkey.compact li { padding: 8px 10px; }
+.vkey.compact .vkey-t { font-size: 12px; }
+.vkey-disc > summary { font-size: 14px; }
+@media (max-width: 800px) { .vkey ul { grid-template-columns: minmax(0, 1fr); } }

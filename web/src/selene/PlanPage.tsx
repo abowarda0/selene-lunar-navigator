@@ -18,6 +18,7 @@ import { SlipCompare, SlipInput } from "./SlipPanel";
 import { TechDetails } from "./TechDetails";
 import { Tiles } from "./Tiles";
 import { SuggestCard } from "./SuggestCard";
+import { VerdictKey } from "./VerdictKey";
 import { Terrain3D } from "./Terrain3D";
 import { usePublishGuide } from "./Luna";
 import { isInside } from "../lib/heightmap";
@@ -108,6 +109,10 @@ export function PlanPage({ sites, plan, onPlan, lander, onLander, onFindGood, in
       <AnswerHero level={pp.verdict.level} answer={answerSentence(pp, lander, days)} context={context}
         inCompare={inCompare} onCompare={onCompare} onFindDates={() => onFindGood(null)} slip={slipControls} shareHash={shareHash} />
       {slipBlock}
+      <details className="disc vkey-disc">
+        <summary><span>What do Good, Marginal and Poor mean?</span></summary>
+        <VerdictKey />
+      </details>
       {!site.terrain && <div className="alert" role="note">No terrain data for this site: times assume a smooth Moon. Near the pole that is wrong by up to 62 pts.</div>}
 
       <Tiles pp={pp} hours={a.hours} slopeDeg={y.site_facts?.slope_deg ?? null}

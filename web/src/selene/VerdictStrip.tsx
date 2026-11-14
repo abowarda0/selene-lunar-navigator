@@ -1,3 +1,4 @@
+import { VerdictKey } from "./VerdictKey";
 import type { ReactElement } from "react";
 import { fmtDate, toMs } from "../lib/format";
 import type { PlanMetrics } from "../lib/rank";
@@ -33,7 +34,8 @@ export function VerdictStrip({ rows, selected, onPick }: Props): ReactElement {
           </div>
         </div>
       ))}
-      <p className="src"><span className="vw good"><i />Good</span> <span className="vw marginal"><i />Marginal</span> <span className="vw poor"><i />Poor</span> · Click a day to open it in Plan.</p>
+      <VerdictKey compact />
+      <p className="src">Each square is one landing day at 00:00 UTC with your mission length. Click a day to open it in Plan.</p>
     </div>
   );
 }

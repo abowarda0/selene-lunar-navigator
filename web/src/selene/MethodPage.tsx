@@ -1,3 +1,4 @@
+import { VerdictKey } from "./VerdictKey";
 import type { ReactElement } from "react";
 
 const GLOSSARY = [
@@ -40,6 +41,10 @@ export function MethodPage(): ReactElement {
         </section>
       </div>
 
+      <section className="s-card" aria-labelledby="vk-h">
+        <div className="s-card-head"><h2 id="vk-h">What Good, Marginal and Poor mean</h2></div>
+        <VerdictKey />
+      </section>
       <section className="s-card" id="validation">
         <div className="s-card-head"><h2>How we checked it</h2></div>
         <ul className="checked">

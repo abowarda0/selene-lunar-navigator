@@ -1,3 +1,4 @@
+import { VerdictKey } from "./VerdictKey";
 import { useMemo, type ReactElement } from "react";
 import type { Site } from "../api/types";
 import { useDeferred, useYears } from "../hooks";
@@ -54,6 +55,7 @@ export function BestSites({ sites, plan, lander, onPick, compare }: Props): Reac
       <div>
         <h1 className="headline">Best sites for {fmtUtc(start)}, {plan.hours / 24} days.</h1>
         <p className="src">{SORT_RULE}</p>
+        <VerdictKey compact />
       </div>
       <div className="sites-grid">
         <div>

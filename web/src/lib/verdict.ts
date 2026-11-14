@@ -10,12 +10,12 @@ import { longestGap, type PowerResult } from "./power";
 const POWER_MARGIN_PTS = 10;
 // Light: does the mission fit inside the sunlight? Good = the Sun stays up the whole mission (flickers under
 // an hour ignored); Marginal = a short dark gap, usually at the start or end; Poor = longer darkness. Our planning rule.
-const GOOD_DARK_H = 1;
-const MARGINAL_DARK_H = 12;
-const GOOD_GAP_H = 24;
-const MARGINAL_GAP_H = 120;
-const GOOD_SHARE = 0.3;
-const MARGINAL_SHARE = 0.1;
+export const GOOD_DARK_H = 1;
+export const MARGINAL_DARK_H = 12;
+export const GOOD_GAP_H = 24;
+export const MARGINAL_GAP_H = 120;
+export const GOOD_SHARE = 0.3;
+export const MARGINAL_SHARE = 0.1;
 const MS_PER_H = 3_600_000;
 const RANK: Record<VerdictLevel, number> = { good: 0, marginal: 1, poor: 2 };
 
