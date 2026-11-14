@@ -1,3 +1,4 @@
+import { hasServer } from "../api/client";
 import { VerdictKey } from "./VerdictKey";
 import type { ReactElement } from "react";
 
@@ -71,7 +72,11 @@ export function MethodPage(): ReactElement {
         <div className="s-card-head"><h2>Power model limits</h2></div>
         <p>The battery chart is energy bookkeeping only: panel watts in sunlight, minus the loads, minus the radio while the link is open, starting fully charged. It has no thermal model, no charge or discharge losses and no loss of capacity in the cold, so real batteries do worse.</p>
         <p>Everything is for one sample point, not the whole landing region; a few metres away the skyline and the dark spells can differ. The stored data covers about 14 months, so touchdowns near its end cannot be analysed for long windows.</p>
-        <p><b>Custom coordinates:</b> the 12 sites are computed in advance. A point of your own runs the same pipeline on demand (server/point_server.py): 14 months of Horizons Sun, Earth and DSN positions plus the LOLA skyline, a few minutes the first time and then saved. South of 80.5° S it gets the full polar terrain; from 60° to 80.5° S terrain to 30 km only; elsewhere a smooth Moon, and the app says so.</p>
+        {hasServer ? (
+          <p><b>Custom coordinates:</b> the 12 sites are computed in advance. A point of your own runs the same pipeline on demand (server/point_server.py): 14 months of Horizons Sun, Earth and DSN positions plus the LOLA skyline, a few minutes the first time and then saved. South of 80.5° S it gets the full polar terrain; from 60° to 80.5° S terrain to 30 km only; elsewhere a smooth Moon, and the app says so.</p>
+        ) : (
+          <p><b>Custom coordinates:</b> this build covers the 12 sites computed in advance (Horizons, DSN and LOLA for 14 months each). A point of your own needs the same pipeline running on a server (<code>server/point_server.py</code>, about 3 minutes per new point), which this public build does not include.</p>
+        )}
         <p>Lander presets are illustrative class values. The 10 m pole option changes only the Sun windows; the radio link is still computed at 2 m, so the mast result is indicative. Good / Marginal / Poor is our own rule of thumb (for contact: silences under 24 h and Earth reachable at least 30% of the time), not an official NASA standard.</p>
       </section>
 

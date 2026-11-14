@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactElement, type ReactNode } from "react";
+import { hasServer, serverUrl } from "../api/client";
 import { guideTips, safeAnswer, type GuideContext, type GuideFacts, type GuideView } from "../lib/guide";
 
 interface Ctx { readonly ctx: GuideContext; readonly publish: (facts: GuideFacts, answer: string | null) => void }
@@ -43,7 +44,7 @@ type Reply = { readonly kind: "tip" | "ai" | "note"; readonly text: string };
 
 async function askLuna(question: string, ctx: GuideContext): Promise<Reply> {
   try {
-    const r = await fetch("api/assistant", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ question, context: { page: ctx.view, ...ctx.facts, answer: ctx.answer } }) });
+    const r = await fetch(serverUrl("api/assistant"), { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ question, context: { page: ctx.view, ...ctx.facts, answer: ctx.answer } }) });
     const j = (await r.json()) as { ok: boolean; data: { text: string } | null; error: { message: string } | null };
     if (!j.ok || !j.data) return { kind: "note", text: j.error?.message ?? "I couldn't reach my AI helper. My built-in tips still work." };
     const check = safeAnswer(j.data.text, ctx);
@@ -63,7 +64,7 @@ export function Luna(): ReactElement | null {
   const [busy, setBusy] = useState(false);
   const [reply, setReply] = useState<Reply | null>(null);
   const [err, setErr] = useState<string | null>(null);
-  const tips = useMemo(() => (g ? guideTips(g.ctx) : []), [g]);
+  const tips = useMemo(() => (g ? guideTips(g.ctx, hasServer) : []), [g]);
   useEffect(() => { setI(0); setReply(null); }, [g?.ctx.view, g?.ctx.answer]);
   if (!g) return null;
   const shown: Reply = reply ?? { kind: "tip", text: tips[i % Math.max(1, tips.length)] ?? "" };
@@ -87,10 +88,12 @@ export function Luna(): ReactElement | null {
             {tips.length > 1 && <button type="button" className="chip" onClick={() => { setReply(null); setI((n) => n + 1); }}>Next tip ({(i % tips.length) + 1}/{tips.length})</button>}
             <button type="button" className="chip" onClick={() => setOpen(false)}>Hide</button>
           </div>
-          <form className="luna-ask" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
-            <input value={q} onChange={(e) => { setQ(e.target.value); setErr(null); }} placeholder="Ask Luna about this page" aria-label="Ask Luna a question" maxLength={400} />
-            <button type="submit" className="btn primary" disabled={busy}>Ask</button>
-          </form>
+          {hasServer && (
+            <form className="luna-ask" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
+              <input value={q} onChange={(e) => { setQ(e.target.value); setErr(null); }} placeholder="Ask Luna about this page" aria-label="Ask Luna a question" maxLength={400} />
+              <button type="submit" className="btn primary" disabled={busy}>Ask</button>
+            </form>
+          )}
           {err && <p className="luna-err" role="alert">{err}</p>}
         </div>
       )}

@@ -145,4 +145,17 @@ export function createClient(opts: ClientOptions = {}): Client {
 }
 
 const env = import.meta.env as Record<string, string | undefined>;
-export const api = createClient({ apiBase: env.VITE_API_BASE || undefined, dataBase: `${env.BASE_URL ?? "./"}data/`, pointsBase: env.VITE_POINTS_BASE || undefined });
+/**
+ * Where the hosted SELENE server lives (custom points + Luna's AI), e.g. https://user-selene.hf.space.
+ * Empty in development: Vite forwards /api/* to the local servers.
+ */
+const SERVER = (env.VITE_SERVER_URL ?? "").replace(/\/+$/, "");
+export const serverUrl = (path: string): string => (SERVER ? `${SERVER}/${path}` : path);
+/**
+ * Features that need the SELENE server (custom coordinates, Luna's free-text AI) are shown only when one is
+ * configured (VITE_SERVER_URL / VITE_POINTS_BASE) or in development, where Vite forwards /api to local servers.
+ * The static GitHub Pages build has none, so those features stay hidden there instead of failing.
+ */
+export const hasServer: boolean = !!SERVER || !!env.VITE_POINTS_BASE || !!import.meta.env.DEV;
+
+export const api = createClient({ apiBase: env.VITE_API_BASE || undefined, dataBase: `${env.BASE_URL ?? "./"}data/`, pointsBase: env.VITE_POINTS_BASE || serverUrl("api/points") });

@@ -47,7 +47,6 @@ const STATIC: Record<Exclude<GuideView, "plan">, readonly string[]> = {
   home: [
     "Hi, I'm Luna. Tell me what you already know: a landing date, a site, or both, and I'll check sunlight and contact with Earth.",
     "The pins on the Moon are real candidate landing areas near the south pole. Click one to fly there.",
-    "Have your own coordinates? Type them under Mission setup and press Compute this point: the same NASA pipeline runs for your point in a few minutes.",
     "Everything here comes from NASA data: JPL Horizons for the Sun and Earth, LOLA laser maps for the mountains.",
   ],
   dates: [
@@ -67,8 +66,12 @@ const STATIC: Record<Exclude<GuideView, "plan">, readonly string[]> = {
   ],
 };
 
-export function guideTips(ctx: GuideContext): string[] {
-  return ctx.view === "plan" ? planTips(ctx.facts, ctx.answer) : [...STATIC[ctx.view]];
+/** Shown on Home only when custom coordinates are available (a SELENE server is configured). */
+export const CUSTOM_POINT_TIP = "Have your own coordinates? Type them under Mission setup and press Compute this point: the same NASA pipeline runs for your point in a few minutes.";
+
+export function guideTips(ctx: GuideContext, withServer = false): string[] {
+  if (ctx.view === "plan") return planTips(ctx.facts, ctx.answer);
+  return ctx.view === "home" && withServer ? [...STATIC.home, CUSTOM_POINT_TIP] : [...STATIC[ctx.view]];
 }
 
 /** Numbers in a text, normalised: "1,200" -> "1200", "49%" -> "49". */
