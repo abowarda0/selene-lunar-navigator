@@ -1,0 +1,59 @@
+URL: https://ssd.jpl.nasa.gov/horizons/app.html
+TITLE: Horizons System
+
+Skip Navigation
+NASA
+JPL
+Caltech
+Home
+About
+ 
+Orbits &
+Ephemerides 
+Planets
+ 
+Planetary
+Satellites 
+Small Bodies
+ 
+Tools
+ 
+Extras
+ 
+Home Tools Horizons System
+Horizons System
+About
+App
+Manual
+Tutorial
+Time Spans
+News
+Horizons Web Application
+Save/Load Settings...
+Set Defaults
+Ephemeris Type: 
+Observer Table
+Vector Table
+Osculating Orbital Elements
+Small-Body SPK File
+1
+Target Body: Mars
+2 Edit
+Observer Location: Geocentric [code: 500]
+3 Edit
+Time Specification: Start=2026-11-13 UT , Stop=2026-12-13, Step=1 (days)
+4 Edit
+Table Settings: defaults
+5 Edit
+
+After specifying settings above (items 1 to 5), generate an ephemeris by pressing the "Generate Ephemeris" button below. If you plan to use one of the "batch" modes to access Horizons, the batch-file corresponding to the settings above can be viewed by using this link.
+
+Generate Ephemeris
+ Site Map
+ Privacy
+ Image Policy
+ Contact Us
+Site Manager: Ryan Park
+Site Design: Alan B. Chamberlin
+URS Clearance: CL#21-4165
+The JPL Solar System Dynamics group’s ephemeris development, maintenance, and improvement tasks are primarily supported by NASA’s Advanced Multi-Mission Operations System, which is funded by NASA’s Science Mission Directorate .

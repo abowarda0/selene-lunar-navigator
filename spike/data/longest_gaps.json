@@ -1,0 +1,57 @@
+{
+ "malapert_massif": {
+  "longest_dark_h": 297,
+  "dark_over_48h": 10,
+  "longest_no_link_h": 192
+ },
+ "mons_mouton": {
+  "longest_dark_h": 228,
+  "dark_over_48h": 5,
+  "longest_no_link_h": 296
+ },
+ "mons_mouton_plateau": {
+  "longest_dark_h": 370,
+  "dark_over_48h": 14,
+  "longest_no_link_h": 1
+ },
+ "nobile_rim_2": {
+  "longest_dark_h": 359,
+  "dark_over_48h": 14,
+  "longest_no_link_h": 189
+ },
+ "haworth": {
+  "longest_dark_h": 466,
+  "dark_over_48h": 12,
+  "longest_no_link_h": 312
+ },
+ "cabeus_b_peak": {
+  "longest_dark_h": 418,
+  "dark_over_48h": 16,
+  "longest_no_link_h": 219
+ },
+ "de_gerlache_rim": {
+  "longest_dark_h": 186,
+  "dark_over_48h": 13,
+  "longest_no_link_h": 297
+ },
+ "slater_plain": {
+  "longest_dark_h": 249,
+  "dark_over_48h": 6,
+  "longest_no_link_h": 318
+ },
+ "ridge": {
+  "longest_dark_h": 491,
+  "dark_over_48h": 9,
+  "longest_no_link_h": 337
+ },
+ "chandrayaan3": {
+  "longest_dark_h": 382,
+  "dark_over_48h": 13,
+  "longest_no_link_h": 1
+ },
+ "apollo11": {
+  "longest_dark_h": 354,
+  "dark_over_48h": 13,
+  "longest_no_link_h": 1
+ }
+}

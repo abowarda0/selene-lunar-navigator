@@ -1,0 +1,160 @@
+<title>Navigator Engine Validation</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: one reading column; each finding = claim, figure plate, plain-language note. */
+:root {
+  --bg: #F3F4F6;          /* regolith grey, faint blue bias */
+  --surface: #FFFFFF;
+  --fg: #16191F;
+  --muted: #5B6270;
+  --rule: #D9DCE2;
+  --sun: #C96F0E;         /* Sun orange, matches the figures */
+  --earth: #2F6DB5;       /* Earth blue, matches the figures */
+  --ok: #2E7D50;
+  --warn: #A3610B;
+  --display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111318; --surface: #1A1D24; --fg: #E8EAEE; --muted: #9AA1AE; --rule: #2C313B;
+    --sun: #F0A04B; --earth: #6FA3E6; --ok: #5CC28A; --warn: #E3A54A; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111318; --surface: #1A1D24; --fg: #E8EAEE; --muted: #9AA1AE; --rule: #2C313B;
+  --sun: #F0A04B; --earth: #6FA3E6; --ok: #5CC28A; --warn: #E3A54A; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font: 16px/1.6 var(--body); }
+.wrap {
+  max-width: 980px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+  display: grid; gap: 48px;
+}
+h1, h2 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(1.9rem, 1.4rem + 2vw, 2.8rem); font-weight: 700; }
+h2 { font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.65rem); font-weight: 700; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font: 500 0.78rem/1 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header { display: grid; gap: 16px; }
+.lede { font-size: 1.12rem; color: var(--fg); }
+.lede strong { font-weight: 600; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 8px; }
+.stat { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px; display: grid; gap: 6px; align-content: start; }
+.stat b { font: 700 1.9rem/1 var(--display); font-variant-numeric: tabular-nums; }
+.stat span { color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.stat.ok b { color: var(--ok); } .stat.sun b { color: var(--sun); } .stat.warn b { color: var(--warn); }
+section { display: grid; gap: 14px; }
+.plate { background: #FFFFFF; border: 1px solid var(--rule); border-radius: 6px; padding: 10px; overflow-x: auto; }
+.plate img { display: block; width: 100%; min-width: 640px; height: auto; }
+.note { color: var(--muted); }
+.note b { color: var(--fg); font-weight: 600; }
+.sun-t { color: var(--sun); font-weight: 600; } .earth-t { color: var(--earth); font-weight: 600; }
+ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; max-width: 72ch; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; min-width: 560px; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font: 500 0.75rem/1.3 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+code { font-family: var(--mono); font-size: 0.88em; background: var(--surface); border: 1px solid var(--rule); border-radius: 4px; padding: 0 4px; }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 0; }
+footer { color: var(--muted); font-size: 0.9rem; display: grid; gap: 6px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">NASA Space Apps 2026 · Lunar Landing Site Navigator · Backend engine</div>
+    <h1>Does our engine get the Sun and Earth right?</h1>
+    <p class="lede">We checked our engine against NASA's own maps of how often each spot near the lunar south pole sees the Sun and Earth. <strong>With LOLA terrain it matches NASA closely, including permanent shadow and blocked Earth. Without terrain, it is badly wrong near the pole.</strong></p>
+    <div class="stats">
+      <div class="stat ok"><b>6 of 8</b><span>polar test points within 2.4 percentage points of NASA, Sun and Earth</span></div>
+      <div class="stat sun"><b>0</b><span>mismatches against Horizons' own visibility flags (4,321 Sun and 4,317 Earth rows)</span></div>
+      <div class="stat warn"><b>62 pts</b><span>worst error near the pole if we ignore terrain and treat the Moon as a smooth ball</span></div>
+    </div>
+  </header>
+
+  <section>
+    <div class="eyebrow">How the engine works</div>
+    <ul>
+      <li><b>Where the Sun and Earth are:</b> JPL Horizons, for an observer standing on the Moon, every 10 minutes.</li>
+      <li><b>Where the mountains are:</b> LOLA terrain maps from NASA's archive. From each site we trace 720 directions up to 150 km and keep the highest terrain angle: the skyline.</li>
+      <li><b>Visible</b> means the top edge of the Sun's or Earth's disc is above the skyline in that direction. NASA's maps use the same rule.</li>
+    </ul>
+  </section>
+
+  <hr>
+
+  <section>
+    <div class="eyebrow">Finding 1</div>
+    <h2>With terrain we land on NASA's numbers</h2>
+    <div class="plate"><img src="figures/1_validation_vs_nasa.png" alt="Scatter plots: our engine versus NASA's maps for Sun and Earth visibility. Filled points with terrain lie on the diagonal; hollow smooth-Moon points scatter far from it." width="1300" height="700"></div>
+    <p class="note">Each dot is one test point. On the dashed line, our number equals NASA's. <b>Filled dots</b> (our engine with terrain) sit on the line. <b>Hollow grey dots</b> (smooth Moon, no terrain) are scattered: they predict about 55% sunlight everywhere, even at a spot NASA says is in permanent shadow. Horizontal bars show how much NASA's own value changes between neighbouring 120 m pixels.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Finding 2</div>
+    <h2>Near the pole, terrain is not optional</h2>
+    <div class="plate"><img src="figures/2_error_terrain_vs_smooth.png" alt="Bar chart of error versus NASA at 8 polar points: smooth Moon errors up to 62 points, terrain errors mostly under 3." width="1300" height="580"></div>
+    <p class="note">Error in percentage points of time. With terrain, six points are within 2.4. The two ridge points differ more (2 and 12 points). On a ridge, moving one pixel changes NASA's own value by up to 40 points, so both of ours stay inside NASA's local range. The smooth Moon misses by up to 62 points.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">Where we tested</div>
+    <h2>Points picked from NASA's map, not from a list we chose</h2>
+    <div class="plate"><img src="figures/3_test_points_on_nasa_map.png" alt="NASA illumination map of the 120 km around the south pole with eight test points circled, from permanent shadow to bright ridges." width="900" height="860"></div>
+    <p class="note">The 120 km around the south pole, coloured by NASA's average sunlight. We chose test points straight from this map so they cover every case: permanently dark crater floors, dim slopes, and the bright ridges where landers want to go.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">What the pole looks like</div>
+    <h2>A month on a ridge 17 km from the pole</h2>
+    <div class="plate"><img src="figures/4_polar_ridge_sky_and_timeline.png" alt="Top: sky view with the Sun circling just below the flat horizon above a jagged skyline, and Earth rising and setting in the south-east. Bottom: Sun and Earth height above the terrain over June 2027 with sunlit periods shaded." width="1450" height="1000"></div>
+    <p class="note">Top: the <span class="sun-t">Sun</span> circles the whole horizon, slightly below the flat horizon. The ridge still sees it because the terrain around is even lower. <span class="earth-t">Earth</span> swings up and down in the south-east. Bottom: over the month, light comes and goes as the Sun passes behind peaks, and Earth is hidden for about 12 days. This is the information planners need, and it only appears with terrain.</p>
+  </section>
+
+  <section>
+    <div class="eyebrow">For contrast</div>
+    <h2>Chandrayaan-3 site at 69° S: a normal day and night</h2>
+    <div class="plate"><img src="figures/5_chandrayaan3_sky_view.png" alt="Sky view at the Chandrayaan-3 site: the Sun rises in the east, climbs to 22 degrees in the north and sets in the west; Earth stays high in the north-west." width="1320" height="500"></div>
+    <p class="note">Further from the pole the Sun rises, climbs to 22° and sets, and Earth stays high. Terrain still matters: here it delays sunrise by 5 hours and brings sunset 10 hours earlier in December 2026.</p>
+  </section>
+
+  <hr>
+
+  <section>
+    <div class="eyebrow">All checks</div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Check</th><th>Against</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Smooth-Moon visibility</td><td>Horizons' own Sun and Earth flags, 30 days</td><td class="num">0 mismatches</td></tr>
+          <tr><td>Terrain map east/west orientation</td><td>LOLA global map</td><td class="num">corr. 0.986 (mirrored: −0.08)</td></tr>
+          <tr><td>Sunlight at 69° S, 5 points</td><td>NASA map, 18.6-year average</td><td class="num">within 0.6 pts</td></tr>
+          <tr><td>Sun and Earth near the pole, 8 points</td><td>NASA maps, 18.6-year average</td><td class="num">6 within 2.4 pts; ridges 2 and 12</td></tr>
+          <tr><td>10-minute vs 1-minute steps, ridge, 4 months</td><td>Our own engine</td><td class="num">same windows, ±0.02 h</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="eyebrow">Limits we know about</div>
+    <ul>
+      <li>On ridges our sunlight runs a little high. We have not separated the causes: pixel position, a newer terrain map than NASA used, or our 0.5° direction steps.</li>
+      <li>Terrain pixels are 120 m near the pole and 240 m at 69° S, so ground within about 1 km is smoothed. Finer 5 m maps exist but are not used yet.</li>
+      <li>The lander height is fixed at 2 m. On ridges, going from 0 to 2 m adds up to 3 points of sunlight.</li>
+      <li>"Earth visible" is line of sight only. A real radio link has more requirements.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <span>Data: JPL Horizons API (DE441); LOLA LDEM_60S_240M and LDEM_75S_120M; NASA LOLA average-visibility maps (Mazarico et al. 2011, PDS LOLA EXTRAS). Scripts and raw results are in the team repo under <code>spike/</code>.</span>
+    <span>Built and checked on 13 Nov 2026 by the backend team.</span>
+  </footer>
+</div>

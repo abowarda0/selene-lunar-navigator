@@ -1,0 +1,31 @@
+# Dependencies and build output
+node_modules/
+web/dist/
+web/publish/
+*.tsbuildinfo
+
+# Python caches and coverage
+__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Downloaded NASA data caches (re-fetched by the spike/ scripts)
+spike/fine/
+spike/dem/
+spike/polar/
+spike/ref_dl/
+
+# Local tool state and settings
+.claude/settings.local.json
+.impeccable/
+.taste-skill/
+
+# Saved third-party pages (contain embedded keys / not ours) and a file of unknown origin
+ref/c.html
+Down Selected Artemis III Candidate Landing Site Navigational Grids - ScienceBase-Catalog.html
+LUNA-OPS-fixed.html
+
+# Secrets
+.env
+.env.*

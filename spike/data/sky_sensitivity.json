@@ -1,0 +1,167 @@
+{
+ "ridge_sun": {
+  "A centre, 0.05\u00b0": {
+   "windows": 44,
+   "hours": 7540.38,
+   "short_lit_min": [
+    22.6,
+    40.1
+   ],
+   "short_dark_min": [
+    51.7
+   ]
+  },
+  "B centre, 0.01\u00b0": {
+   "windows": 44,
+   "hours": 7540.43,
+   "short_lit_min": [
+    23.1,
+    40.2
+   ],
+   "short_dark_min": [
+    51.7
+   ],
+   "events_unmatched": 0,
+   "median_shift_min": 0.0,
+   "max_shift_min": 1.8
+  },
+  "C whole disc, 0.01\u00b0": {
+   "windows": 44,
+   "hours": 7550.59,
+   "short_lit_min": [
+    28.9,
+    45.1
+   ],
+   "short_dark_min": [
+    38.5,
+    49.2,
+    49.6
+   ],
+   "events_unmatched": 0,
+   "median_shift_min": 5.6,
+   "max_shift_min": 18.3
+  }
+ },
+ "ridge_earth": {
+  "A centre, 0.05\u00b0": {
+   "windows": 16,
+   "hours": 5475.75,
+   "short_lit_min": [],
+   "short_dark_min": []
+  },
+  "B centre, 0.01\u00b0": {
+   "windows": 16,
+   "hours": 5475.75,
+   "short_lit_min": [],
+   "short_dark_min": [],
+   "events_unmatched": 0,
+   "median_shift_min": 0.0,
+   "max_shift_min": 0.0
+  },
+  "C whole disc, 0.01\u00b0": {
+   "windows": 16,
+   "hours": 5476.93,
+   "short_lit_min": [],
+   "short_dark_min": [],
+   "events_unmatched": 0,
+   "median_shift_min": 0.0,
+   "max_shift_min": 16.2
+  }
+ },
+ "polar_mid_sun": {
+  "A centre, 0.05\u00b0": {
+   "windows": 23,
+   "hours": 5130.08,
+   "short_lit_min": [],
+   "short_dark_min": [
+    32.8
+   ]
+  },
+  "B centre, 0.01\u00b0": {
+   "windows": 23,
+   "hours": 5130.08,
+   "short_lit_min": [],
+   "short_dark_min": [
+    32.8
+   ],
+   "events_unmatched": 0,
+   "median_shift_min": 0.0,
+   "max_shift_min": 0.3
+  },
+  "C whole disc, 0.01\u00b0": {
+   "windows": 22,
+   "hours": 5133.11,
+   "short_lit_min": [],
+   "short_dark_min": [],
+   "events_unmatched": 0,
+   "median_shift_min": 3.2,
+   "max_shift_min": 4659.4
+  }
+ },
+ "polar_mid_earth": {
+  "A centre, 0.05\u00b0": {
+   "windows": 0,
+   "hours": 0,
+   "short_lit_min": [],
+   "short_dark_min": []
+  },
+  "B centre, 0.01\u00b0": {
+   "windows": 0,
+   "hours": 0,
+   "short_lit_min": [],
+   "short_dark_min": []
+  },
+  "C whole disc, 0.01\u00b0": {
+   "windows": 0,
+   "hours": 0,
+   "short_lit_min": [],
+   "short_dark_min": []
+  }
+ },
+ "chandrayaan3_sun": {
+  "A centre, 0.05\u00b0": {
+   "windows": 15,
+   "hours": 4807.95,
+   "short_lit_min": [],
+   "short_dark_min": []
+  },
+  "B centre, 0.01\u00b0": {
+   "windows": 15,
+   "hours": 4807.95,
+   "short_lit_min": [],
+   "short_dark_min": [],
+   "events_unmatched": 0,
+   "median_shift_min": 0.0,
+   "max_shift_min": 0.1
+  },
+  "C whole disc, 0.01\u00b0": {
+   "windows": 15,
+   "hours": 4807.98,
+   "short_lit_min": [],
+   "short_dark_min": [],
+   "events_unmatched": 0,
+   "median_shift_min": 0.0,
+   "max_shift_min": 0.3
+  }
+ },
+ "chandrayaan3_earth": {
+  "A centre, 0.05\u00b0": {
+   "windows": 1,
+   "hours": 10248.0,
+   "short_lit_min": [],
+   "short_dark_min": []
+  },
+  "B centre, 0.01\u00b0": {
+   "windows": 1,
+   "hours": 10248.0,
+   "short_lit_min": [],
+   "short_dark_min": []
+  },
+  "C whole disc, 0.01\u00b0": {
+   "windows": 1,
+   "hours": 10248.0,
+   "short_lit_min": [],
+   "short_dark_min": []
+  }
+ }
+}

@@ -1,0 +1,146 @@
+{
+ "method": "Pick one sample landing point inside each NASA Artemis III candidate region.",
+ "gazetteer": "USGS Gazetteer of Planetary Nomenclature (planetarynames.wr.usgs.gov), accessed 14 Nov 2026",
+ "illumination_map": "NASA LOLA AVGVISIB_75S_120M_201608 (sun) and _EARTH (PDS LOLA EXTRAS)",
+ "nasa_regions_source": "NASA, 'NASA Provides Update on Artemis III Moon Landing Regions', Oct 2024",
+ "anchor_source": "LROC low-Sun NAC region mosaics (data.lroc.im-ldi.com RDR products), centre lat/lon; USGS Gazetteer for Slater",
+ "min_earth_fraction": 0.3,
+ "sites": [
+  {
+   "id": "malapert_massif",
+   "nasa_region": "Malapert Massif",
+   "anchor_feature": "LROC NAC mosaic NAC_ROI_MALAPERTLO1_P860S0003",
+   "anchor_lat": -86.0,
+   "anchor_lon_e": 0.3,
+   "search_km": [
+    0,
+    8
+   ],
+   "lat": -85.96792,
+   "lon_e": 357.72287,
+   "nasa_avg_sun": 0.845,
+   "nasa_avg_earth": 0.71,
+   "km_from_anchor": 5.6,
+   "earth_filter_applied": true
+  },
+  {
+   "id": "mons_mouton",
+   "nasa_region": "Mons Mouton / Nobile Rim 1",
+   "anchor_feature": "LROC NAC mosaic NAC_ROI_MTMOUTONLO1_P854S0353",
+   "anchor_lat": -85.4,
+   "anchor_lon_e": 35.3,
+   "search_km": [
+    0,
+    8
+   ],
+   "lat": -85.30405,
+   "lon_e": 37.0581,
+   "nasa_avg_sun": 0.858,
+   "nasa_avg_earth": 0.602,
+   "km_from_anchor": 5.2,
+   "earth_filter_applied": true
+  },
+  {
+   "id": "mons_mouton_plateau",
+   "nasa_region": "Mons Mouton Plateau",
+   "anchor_feature": "LROC NAC mosaic NAC_ROI_MOUTNPLTLO1_P843S0306",
+   "anchor_lat": -84.3,
+   "anchor_lon_e": 30.6,
+   "search_km": [
+    0,
+    8
+   ],
+   "lat": -84.27777,
+   "lon_e": 29.90448,
+   "nasa_avg_sun": 0.542,
+   "nasa_avg_earth": 1.0,
+   "km_from_anchor": 2.2,
+   "earth_filter_applied": true
+  },
+  {
+   "id": "nobile_rim_2",
+   "nasa_region": "Nobile Rim 2",
+   "anchor_feature": "LROC NAC mosaic NAC_ROI_NOBILE02LO1_P839S0587",
+   "anchor_lat": -83.9,
+   "anchor_lon_e": 58.7,
+   "search_km": [
+    0,
+    8
+   ],
+   "lat": -83.72496,
+   "lon_e": 59.42007,
+   "nasa_avg_sun": 0.539,
+   "nasa_avg_earth": 0.718,
+   "km_from_anchor": 5.8,
+   "earth_filter_applied": true
+  },
+  {
+   "id": "haworth",
+   "nasa_region": "Haworth",
+   "anchor_feature": "LROC NAC mosaic NAC_ROI_HAWORTH_LO1_P867S3363",
+   "anchor_lat": -86.7,
+   "anchor_lon_e": 336.3,
+   "search_km": [
+    0,
+    8
+   ],
+   "lat": -86.95319,
+   "lon_e": 335.81466,
+   "nasa_avg_sun": 0.686,
+   "nasa_avg_earth": 0.594,
+   "km_from_anchor": 7.7,
+   "earth_filter_applied": true
+  },
+  {
+   "id": "cabeus_b_peak",
+   "nasa_region": "Peak near Cabeus B",
+   "anchor_feature": "LROC NAC mosaic NAC_ROI_CABEUSPKLO1_P836S2912",
+   "anchor_lat": -83.6,
+   "anchor_lon_e": 291.2,
+   "search_km": [
+    0,
+    8
+   ],
+   "lat": -83.61575,
+   "lon_e": 291.40941,
+   "nasa_avg_sun": 0.684,
+   "nasa_avg_earth": 0.658,
+   "km_from_anchor": 0.9,
+   "earth_filter_applied": true
+  },
+  {
+   "id": "de_gerlache_rim",
+   "nasa_region": "de Gerlache Rim 2",
+   "anchor_feature": "LROC NAC mosaic NAC_ROI_DEGERRIMLO1_P885S2933 (titled 'de Gerlache Rim')",
+   "anchor_lat": -88.5,
+   "anchor_lon_e": 293.3,
+   "search_km": [
+    0,
+    8
+   ],
+   "lat": -88.70412,
+   "lon_e": 291.59023,
+   "nasa_avg_sun": 0.797,
+   "nasa_avg_earth": 0.611,
+   "km_from_anchor": 6.3,
+   "earth_filter_applied": true
+  },
+  {
+   "id": "slater_plain",
+   "nasa_region": "Slater Plain",
+   "anchor_feature": "Slater (crater, D 25.1 km), USGS Gazetteer: no LROC region mosaic found",
+   "anchor_lat": -88.08,
+   "anchor_lon_e": 111.29,
+   "search_km": [
+    10,
+    35
+   ],
+   "lat": -88.80753,
+   "lon_e": 123.76917,
+   "nasa_avg_sun": 0.78,
+   "nasa_avg_earth": 0.524,
+   "km_from_anchor": 24.2,
+   "earth_filter_applied": true
+  }
+ ]
+}

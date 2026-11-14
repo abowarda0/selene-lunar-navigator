@@ -1,0 +1,250 @@
+[
+ {
+  "kind": "sun",
+  "target": 0.85,
+  "stability_limit": Infinity,
+  "i": 3719,
+  "j": 3914,
+  "lat": -89.45388,
+  "lon_e": 222.65072,
+  "km_from_pole": 16.6,
+  "nasa_sun": 0.8473,
+  "nasa_sun_3x3": [
+   0.423,
+   0.847
+  ],
+  "nasa_earth": 0.5745,
+  "nasa_earth_3x3": [
+   0.409,
+   0.582
+  ],
+  "ours": {
+   "smooth_sun": 0.5502,
+   "smooth_earth": 0.5125,
+   "sun_0m": 0.867,
+   "earth_0m": 0.5796,
+   "missing_dem": 0.0,
+   "horizon_max_0m": 0.3216,
+   "sun_2m": 0.8951,
+   "earth_2m": 0.5807,
+   "horizon_max_2m": 0.049
+  }
+ },
+ {
+  "kind": "sun",
+  "target": 0.65,
+  "stability_limit": 0.1,
+  "i": 4063,
+  "j": 3981,
+  "lat": -88.80533,
+  "lon_e": 123.92693,
+  "km_from_pole": 36.2,
+  "nasa_sun": 0.6514,
+  "nasa_sun_3x3": [
+   0.477,
+   0.78
+  ],
+  "nasa_earth": 0.428,
+  "nasa_earth_3x3": [
+   0.275,
+   0.539
+  ],
+  "ours": {
+   "smooth_sun": 0.5667,
+   "smooth_earth": 0.4997,
+   "sun_0m": 0.773,
+   "earth_0m": 0.4842,
+   "missing_dem": 0.0,
+   "horizon_max_0m": 0.3886,
+   "sun_2m": 0.8071,
+   "earth_2m": 0.5069,
+   "horizon_max_2m": -0.0884
+  }
+ },
+ {
+  "kind": "sun",
+  "target": 0.45,
+  "stability_limit": 0.02,
+  "i": 4022,
+  "j": 4032,
+  "lat": -88.79926,
+  "lon_e": 136.33532,
+  "km_from_pole": 36.4,
+  "nasa_sun": 0.45,
+  "nasa_sun_3x3": [
+   0.418,
+   0.483
+  ],
+  "nasa_earth": 0.0,
+  "nasa_earth_3x3": [
+   0.0,
+   0.0
+  ],
+  "ours": {
+   "smooth_sun": 0.567,
+   "smooth_earth": 0.4904,
+   "sun_0m": 0.4744,
+   "earth_0m": 0.0,
+   "missing_dem": 0.0,
+   "horizon_max_0m": 9.5057,
+   "sun_2m": 0.4828,
+   "earth_2m": 0.0,
+   "horizon_max_2m": 9.4587
+  }
+ },
+ {
+  "kind": "sun",
+  "target": 0.25,
+  "stability_limit": 0.02,
+  "i": 3669,
+  "j": 3413,
+  "lat": -88.32026,
+  "lon_e": 340.24176,
+  "km_from_pole": 50.9,
+  "nasa_sun": 0.25,
+  "nasa_sun_3x3": [
+   0.244,
+   0.259
+  ],
+  "nasa_earth": 0.3592,
+  "nasa_earth_3x3": [
+   0.332,
+   0.385
+  ],
+  "ours": {
+   "smooth_sun": 0.574,
+   "smooth_earth": 0.6088,
+   "sun_0m": 0.248,
+   "earth_0m": 0.3609,
+   "missing_dem": 0.0,
+   "horizon_max_0m": 11.2099,
+   "sun_2m": 0.2487,
+   "earth_2m": 0.3635,
+   "horizon_max_2m": 10.7497
+  }
+ },
+ {
+  "kind": "sun",
+  "target": 0.1,
+  "stability_limit": 0.02,
+  "i": 3993,
+  "j": 3368,
+  "lat": -88.10163,
+  "lon_e": 22.1008,
+  "km_from_pole": 57.6,
+  "nasa_sun": 0.1,
+  "nasa_sun_3x3": [
+   0.095,
+   0.109
+  ],
+  "nasa_earth": 0.0012,
+  "nasa_earth_3x3": [
+   0.0,
+   0.046
+  ],
+  "ours": {
+   "smooth_sun": 0.5551,
+   "smooth_earth": 0.6179,
+   "sun_0m": 0.0964,
+   "earth_0m": 0.0,
+   "missing_dem": 0.0,
+   "horizon_max_0m": 17.917,
+   "sun_2m": 0.0978,
+   "earth_2m": 0.0067,
+   "horizon_max_2m": 17.5703
+  }
+ },
+ {
+  "kind": "sun",
+  "target": 0.0,
+  "stability_limit": 0.02,
+  "i": 3791,
+  "j": 3313,
+  "lat": -88.02167,
+  "lon_e": 357.53534,
+  "km_from_pole": 60.0,
+  "nasa_sun": 0.0,
+  "nasa_sun_3x3": [
+   0.0,
+   0.0
+  ],
+  "nasa_earth": 0.3227,
+  "nasa_earth_3x3": [
+   0.32,
+   0.325
+  ],
+  "ours": {
+   "smooth_sun": 0.551,
+   "smooth_earth": 0.629,
+   "sun_0m": 0.0,
+   "earth_0m": 0.3223,
+   "missing_dem": 0.0,
+   "horizon_max_0m": 12.6926,
+   "sun_2m": 0.0,
+   "earth_2m": 0.3224,
+   "horizon_max_2m": 12.6831
+  }
+ },
+ {
+  "kind": "earth",
+  "target": 0.25,
+  "stability_limit": 0.02,
+  "i": 4134,
+  "j": 3482,
+  "lat": -88.17551,
+  "lon_e": 44.20916,
+  "km_from_pole": 55.3,
+  "nasa_sun": 0.0,
+  "nasa_sun_3x3": [
+   0.0,
+   0.0
+  ],
+  "nasa_earth": 0.25,
+  "nasa_earth_3x3": [
+   0.243,
+   0.254
+  ],
+  "ours": {
+   "smooth_sun": 0.5613,
+   "smooth_earth": 0.5952,
+   "sun_0m": 0.0,
+   "earth_0m": 0.2498,
+   "missing_dem": 0.0,
+   "horizon_max_0m": 9.108,
+   "sun_2m": 0.0,
+   "earth_2m": 0.2501,
+   "horizon_max_2m": 9.1031
+  }
+ },
+ {
+  "kind": "earth",
+  "target": 0.5,
+  "stability_limit": 0.02,
+  "i": 3942,
+  "j": 3352,
+  "lat": -88.10713,
+  "lon_e": 15.70684,
+  "km_from_pole": 57.4,
+  "nasa_sun": 0.1337,
+  "nasa_sun_3x3": [
+   0.134,
+   0.17
+  ],
+  "nasa_earth": 0.5,
+  "nasa_earth_3x3": [
+   0.499,
+   0.502
+  ],
+  "ours": {
+   "smooth_sun": 0.5556,
+   "smooth_earth": 0.6211,
+   "sun_0m": 0.1344,
+   "earth_0m": 0.4988,
+   "missing_dem": 0.0,
+   "horizon_max_0m": 6.3134,
+   "sun_2m": 0.1441,
+   "earth_2m": 0.499,
+   "horizon_max_2m": 5.8411
+  }
+ }
+]

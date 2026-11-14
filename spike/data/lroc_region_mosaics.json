@@ -1,0 +1,92 @@
+{
+ "NAC_ROI_MALAPERTLO1": {
+  "title": "Malapert Massif low-Sun controlled NAC mosaic (Combined mosaic #1)",
+  "clat": -86.0,
+  "clon": 0.3,
+  "latmin": -86.33,
+  "latmax": -85.63,
+  "lonmin": -5.66,
+  "lonmax": 5.15,
+  "rdr": "NAC_ROI_MALAPERTLO1_P860S0003"
+ },
+ "NAC_ROI_MTMOUTONLO1": {
+  "title": "Nobile Rim 1 and Mons Mouton (Leibnitz Beta Plateau) low-Sun controlled NAC mosaic (Combined mosaic #1)",
+  "clat": -85.4,
+  "clon": 35.3,
+  "latmin": -86.07,
+  "latmax": -84.82,
+  "lonmin": 27.29,
+  "lonmax": 43.23,
+  "rdr": "NAC_ROI_MTMOUTONLO1_P854S0353"
+ },
+ "NAC_ROI_MOUTNPLTLO1": {
+  "title": "Mons Mouton Plateau low-Sun controlled NAC mosaic (Combined mosaic #1)",
+  "clat": -84.3,
+  "clon": 30.6,
+  "latmin": -85.76,
+  "latmax": -82.85,
+  "lonmin": 15.49,
+  "lonmax": 46.61,
+  "rdr": "NAC_ROI_MOUTNPLTLO1_P843S0306"
+ },
+ "NAC_ROI_NOBILE02LO1": {
+  "title": "Nobile Rim 2 low-Sun controlled NAC mosaic (Combined mosaic #1)",
+  "clat": -83.9,
+  "clon": 58.7,
+  "latmin": -84.4,
+  "latmax": -83.5,
+  "lonmin": 54.46,
+  "lonmax": 63.02,
+  "rdr": "NAC_ROI_NOBILE02LO1_P839S0587"
+ },
+ "NAC_ROI_HAWORTH_LO1": {
+  "title": "Haworth low-Sun controlled NAC mosaic (Combined mosaic #1)",
+  "clat": -86.7,
+  "clon": 336.3,
+  "latmin": -87.39,
+  "latmax": -86.11,
+  "lonmin": -34.98,
+  "lonmax": -12.36,
+  "rdr": "NAC_ROI_HAWORTH_LO1_P867S3363"
+ },
+ "NAC_ROI_CABEUSPKLO1": {
+  "title": "Peak Near Cabeus B low-Sun controlled NAC mosaic (Combined mosaic #1)",
+  "clat": -83.6,
+  "clon": 291.2,
+  "latmin": -84.06,
+  "latmax": -83.21,
+  "lonmin": -72.47,
+  "lonmax": -64.8,
+  "rdr": "NAC_ROI_CABEUSPKLO1_P836S2912"
+ },
+ "NAC_ROI_CABEUSPKLO2": {
+  "title": "Peak Near Cabeus B low-Sun controlled NAC mosaic (Combined mosaic #2)",
+  "clat": -83.6,
+  "clon": 291.2,
+  "latmin": -84.06,
+  "latmax": -83.21,
+  "lonmin": -72.47,
+  "lonmax": -64.8,
+  "rdr": "NAC_ROI_CABEUSPKLO2_P836S2912"
+ },
+ "NAC_ROI_DEGERRIMLO1": {
+  "title": "de Gerlache Rim low-Sun controlled NAC mosaic (Combined mosaic #1)",
+  "clat": -88.5,
+  "clon": 293.3,
+  "latmin": -89.02,
+  "latmax": -87.79,
+  "lonmin": -83.18,
+  "lonmax": -41.31,
+  "rdr": "NAC_ROI_DEGERRIMLO1_P885S2933"
+ },
+ "NAC_ROI_DEGERKCHLO1": {
+  "title": "de Gerlache Kocher Massif low-Sun controlled NAC mosaic (Combined mosaic #1)",
+  "clat": -85.8,
+  "clon": 243.6,
+  "latmin": -86.27,
+  "latmax": -85.39,
+  "lonmin": -122.59,
+  "lonmax": -110.48,
+  "rdr": "NAC_ROI_DEGERKCHLO1_P858S24363"
+ }
+}

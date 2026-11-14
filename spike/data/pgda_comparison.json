@@ -1,0 +1,135 @@
+{
+ "period": "2026-01-01 + 6794 days, 120-min steps",
+ "rows": [
+  {
+   "point": "site",
+   "lat": -69.373,
+   "lon_e": 32.319,
+   "nasa_sun": {
+    "value": 0.4828,
+    "min_3x3": 0.4749,
+    "max_3x3": 0.4851
+   },
+   "nasa_earth": {
+    "value": 1.0,
+    "min_3x3": 1.0,
+    "max_3x3": 1.0
+   },
+   "ours": {
+    "samples": 81529,
+    "smooth_sun": 0.5048,
+    "smooth_earth": 1.0,
+    "terrain_0m_sun": 0.4825,
+    "terrain_0m_earth": 1.0,
+    "missing_dem_0m": 0.0,
+    "terrain_2m_sun": 0.4839,
+    "terrain_2m_earth": 1.0,
+    "missing_dem_2m": 0.0
+   }
+  },
+  {
+   "point": "30km_N",
+   "lat": -68.3837,
+   "lon_e": 32.319,
+   "nasa_sun": {
+    "value": 0.4697,
+    "min_3x3": 0.468,
+    "max_3x3": 0.4956
+   },
+   "nasa_earth": {
+    "value": 1.0,
+    "min_3x3": 1.0,
+    "max_3x3": 1.0
+   },
+   "ours": {
+    "samples": 81529,
+    "smooth_sun": 0.5046,
+    "smooth_earth": 1.0,
+    "terrain_0m_sun": 0.4759,
+    "terrain_0m_earth": 1.0,
+    "missing_dem_0m": 0.0,
+    "terrain_2m_sun": 0.4775,
+    "terrain_2m_earth": 1.0,
+    "missing_dem_2m": 0.0
+   }
+  },
+  {
+   "point": "30km_E",
+   "lat": -69.3503,
+   "lon_e": 35.1254,
+   "nasa_sun": {
+    "value": 0.4831,
+    "min_3x3": 0.4782,
+    "max_3x3": 0.4901
+   },
+   "nasa_earth": {
+    "value": 1.0,
+    "min_3x3": 1.0,
+    "max_3x3": 1.0
+   },
+   "ours": {
+    "samples": 81529,
+    "smooth_sun": 0.5047,
+    "smooth_earth": 1.0,
+    "terrain_0m_sun": 0.484,
+    "terrain_0m_earth": 1.0,
+    "missing_dem_0m": 0.0,
+    "terrain_2m_sun": 0.4854,
+    "terrain_2m_earth": 1.0,
+    "missing_dem_2m": 0.0
+   }
+  },
+  {
+   "point": "30km_S",
+   "lat": -70.3623,
+   "lon_e": 32.319,
+   "nasa_sun": {
+    "value": 0.4788,
+    "min_3x3": 0.456,
+    "max_3x3": 0.4803
+   },
+   "nasa_earth": {
+    "value": 1.0,
+    "min_3x3": 1.0,
+    "max_3x3": 1.0
+   },
+   "ours": {
+    "samples": 81529,
+    "smooth_sun": 0.5049,
+    "smooth_earth": 1.0,
+    "terrain_0m_sun": 0.4791,
+    "terrain_0m_earth": 1.0,
+    "missing_dem_0m": 0.0,
+    "terrain_2m_sun": 0.4797,
+    "terrain_2m_earth": 1.0,
+    "missing_dem_2m": 0.0
+   }
+  },
+  {
+   "point": "30km_W",
+   "lat": -69.3503,
+   "lon_e": 29.5126,
+   "nasa_sun": {
+    "value": 0.4733,
+    "min_3x3": 0.4087,
+    "max_3x3": 0.4764
+   },
+   "nasa_earth": {
+    "value": 1.0,
+    "min_3x3": 1.0,
+    "max_3x3": 1.0
+   },
+   "ours": {
+    "samples": 81529,
+    "smooth_sun": 0.5048,
+    "smooth_earth": 1.0,
+    "terrain_0m_sun": 0.4709,
+    "terrain_0m_earth": 1.0,
+    "missing_dem_0m": 0.0,
+    "terrain_2m_sun": 0.472,
+    "terrain_2m_earth": 1.0,
+    "missing_dem_2m": 0.0
+   }
+  }
+ ]
+}

@@ -1,0 +1,131 @@
+URL: https://pds-geosciences.wustl.edu/missions/lro/lola.htm
+TITLE: PDS Geosciences Node Data and Services: LRO LOLA
+
+Planetary Data System
+Find a Node
+
+
+	
+		
++ NASA Homepage
++ NASA en Español
++ Contact NASA
+
+HOME	DATA AND SERVICES	TOOLS	ABOUT US	CONTACT US	SITE MAP
+Services
+
+Analyst's Notebooks
+Orbital Data Explorers
+Spectral Library
+FTP Access
+Workshops
+
+Geosciences Node Data
+
+Mars
+Venus
+Mercury
+Moon
+Moon Data
+Artemis II
+CLPS
+Chandrayaan-1
+Chang'e
+GRAIL
+LCROSS
+LRO
+About LRO
+Diviner
+LEND
+LOLA
+Mini-RF
+Radio Science
+Apollo
+Kaguya
+MSX
+Lunar Prospector
+Lunar Radar
+Lunar Spectroscopy
+Clementine
+Pre-Magellan
+Earth
+Asteroids
+Radio Science
+Gravity Models
+All Geosciences DOIs
+All Geosciences Data Holdings
+
+Help
+
+Frequently Asked Questions
+Geosciences Node Forums
+Help for Data Users
+Help for Data Reviewers
+Help for Proposers
+About PDS4
+About Checksums
+Cite PDS On Your Poster
+Contact Us
+
+Scheduled Maintenance
+This site may be down on Thursdays between 7:00 and 9:30 pm Central Time for maintenance.
+	
+LRO: LOLA
+September 15, 2026. LRO Release 67 includes new LOLA EDR and RDR data acquired between March 24 and June 13, 2026.
+
+LOLA is the Lunar Orbiter Laser Altimeter, which determines the global topography of the lunar surface at high resolution. LOLA data sets are produced by the LOLA Science Team at NASA Goddard Space Flight Center, Greenbelt, MD.
+
+LOLA data products are also available at The LOLA Data Node. The Data Node, managed by the LOLA Science Team, is updated more frequently than the three-month intervals between LRO deliveries to PDS. Users who require the most recent LOLA data should use the Lunar Orbital Data Explorer (ODE) to locate and download the data at the LOLA Data Node.
+
+Latest LOLA Data
+	Lunar Orbital Data Explorer - Search, display, and download  the most recently released data from the LOLA Data Node.
+
+Archived Copy of LOLA Data Sets at the Geosciences Node
+
+The PDS Geosciences Node archives a copy of the data at the LOLA Data Node at every three-month LRO release.
+
+Raw Data Products (PDS4)
+Bundle Root
+EDR - Experiment Data Records
+Derived Data Products (PDS4)
+Bundle Root
+RDR - Reduced Data Records
+RADR - Radiometry Data Records
+GDR - Gridded Data Records
+SHADR - Spherical Harmonic Data Records
+SLDEM - Selene/LRO Digital Elevation Model
+
+Related Information
+
+LOLA Frequently Asked Questions
+ 
+LOLA RDR Software - Translate binary RDR files into comma-separated-value text files for use in spreadsheets, space-separated tables for plotting, or binary "xyz" format for use with mapping tools.
+ 
+PDS Catalog Files
+EDR Data Set Description
+RDR Data Set Description
+RADR Data Set Description
+GDR Data Set Description
+SHADR Data Set Description
+LOLA Instrument Description
+Personnel
+References
+Software Interface Specifications (SISs)
+LOLA EDR Data Product SIS (PDF, 564 KB)
+LOLA RDR Data Product SIS (PDF, 784 KB)
+LOLA Archive Volume SIS (PDF, 803 KB)
+ 
+LOLA Team Web Site
+ 
+								
+	
++ Freedom of Information Act
++ NASA Strategic Plans
++ NASA Privacy Statement, Disclaimer, and
+   Accessibility Certification
++ Copyright/Image Use Policy
+		
+Curator: Jennifer Ward
+NASA Official: Paul Byrne
+Last Updated: 29 Sep 2026
++ Comments and Questions

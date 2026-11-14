@@ -1,0 +1,149 @@
+{
+ "point": {
+  "lat": -89.45388,
+  "lon_e": 222.65072,
+  "nasa_sun": 0.8473
+ },
+ "2026-12 sun 10min": {
+  "windows": 1,
+  "hours": 720.0,
+  "shortest_h": 720.0,
+  "starts": [
+   "12-01 00:00"
+  ]
+ },
+ "2026-12 sun  1min": {
+  "windows": 1,
+  "hours": 720.0,
+  "shortest_h": 720.0,
+  "starts": [
+   "12-01 00:00"
+  ]
+ },
+ "2026-12 earth 10min": {
+  "windows": 1,
+  "hours": 359.7,
+  "shortest_h": 359.7,
+  "starts": [
+   "12-13 01:08"
+  ]
+ },
+ "2026-12 earth  1min": {
+  "windows": 1,
+  "hours": 359.7,
+  "shortest_h": 359.7,
+  "starts": [
+   "12-13 01:08"
+  ]
+ },
+ "2027-03 sun 10min": {
+  "windows": 4,
+  "hours": 647.68,
+  "shortest_h": 37.21,
+  "starts": [
+   "03-01 00:00",
+   "03-20 10:12",
+   "03-22 18:59",
+   "03-26 11:55"
+  ]
+ },
+ "2027-03 sun  1min": {
+  "windows": 4,
+  "hours": 647.67,
+  "shortest_h": 37.21,
+  "starts": [
+   "03-01 00:00",
+   "03-20 10:12",
+   "03-22 18:59",
+   "03-26 11:55"
+  ]
+ },
+ "2027-03 earth 10min": {
+  "windows": 1,
+  "hours": 366.29,
+  "shortest_h": 366.29,
+  "starts": [
+   "03-05 00:02"
+  ]
+ },
+ "2027-03 earth  1min": {
+  "windows": 1,
+  "hours": 366.29,
+  "shortest_h": 366.29,
+  "starts": [
+   "03-05 00:02"
+  ]
+ },
+ "2027-06 sun 10min": {
+  "windows": 4,
+  "hours": 516.64,
+  "shortest_h": 17.3,
+  "starts": [
+   "06-03 07:45",
+   "06-11 04:35",
+   "06-17 17:13",
+   "06-19 07:02"
+  ]
+ },
+ "2027-06 sun  1min": {
+  "windows": 4,
+  "hours": 516.62,
+  "shortest_h": 17.3,
+  "starts": [
+   "06-03 07:45",
+   "06-11 04:35",
+   "06-17 17:13",
+   "06-19 07:02"
+  ]
+ },
+ "2027-06 earth 10min": {
+  "windows": 2,
+  "hours": 429.9,
+  "shortest_h": 206.34,
+  "starts": [
+   "06-01 00:00",
+   "06-21 16:26"
+  ]
+ },
+ "2027-06 earth  1min": {
+  "windows": 2,
+  "hours": 429.9,
+  "shortest_h": 206.34,
+  "starts": [
+   "06-01 00:00",
+   "06-21 16:26"
+  ]
+ },
+ "2027-09 sun 10min": {
+  "windows": 1,
+  "hours": 720.0,
+  "shortest_h": 720.0,
+  "starts": [
+   "09-01 00:00"
+  ]
+ },
+ "2027-09 sun  1min": {
+  "windows": 1,
+  "hours": 720.0,
+  "shortest_h": 720.0,
+  "starts": [
+   "09-01 00:00"
+  ]
+ },
+ "2027-09 earth 10min": {
+  "windows": 1,
+  "hours": 374.81,
+  "shortest_h": 374.81,
+  "starts": [
+   "09-11 13:58"
+  ]
+ },
+ "2027-09 earth  1min": {
+  "windows": 1,
+  "hours": 374.81,
+  "shortest_h": 374.81,
+  "starts": [
+   "09-11 13:58"
+  ]
+ }
+}

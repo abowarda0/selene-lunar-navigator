@@ -1,0 +1,13 @@
+{
+ "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=json&EPHEM_TYPE=OBSERVER&CENTER=%27coord%40301%27&COORD_TYPE=%27GEODETIC%27&SITE_COORD=%2723.473%2C0.674%2C0%27&COMMAND=%2710%27&START_TIME=%272026-12-01%27&STOP_TIME=%272027-01-30%27&STEP_SIZE=%275+m%27&QUANTITIES=%274%27&R_T_S_ONLY=%27TVH%27&ELEV_CUT=%272%27&CSV_FORMAT=%27YES%27",
+ "status": 200,
+ "seconds": 0.94,
+ "headers": {
+  "Server": "nginx",
+  "Date": "Fri, 13 Nov 2026 13:28:07 GMT",
+  "Content-Type": "application/json",
+  "Transfer-Encoding": "chunked",
+  "Connection": "close"
+ },
+ "bytes": 8552
+}

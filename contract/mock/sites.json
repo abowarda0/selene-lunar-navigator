@@ -1,0 +1,26 @@
+{
+ "ok": true,
+ "data": [
+  {
+   "id": "chandrayaan3",
+   "name": "Chandrayaan-3 (Statio Shiv Shakti)",
+   "lat": -69.373,
+   "lon_e": 32.319,
+   "kind": "landed",
+   "terrain": true,
+   "coord_source": "Wikipedia: Shiv Shakti Point",
+   "verified": true
+  },
+  {
+   "id": "apollo11",
+   "name": "Apollo 11 (Tranquility Base)",
+   "lat": 0.674,
+   "lon_e": 23.473,
+   "kind": "landed",
+   "terrain": false,
+   "coord_source": "to be checked by C (T37)",
+   "verified": false
+  }
+ ],
+ "error": null
+}
