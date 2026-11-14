@@ -8,11 +8,10 @@ import { toMs } from "./format";
 import { longestGap, type PowerResult } from "./power";
 
 const POWER_MARGIN_PTS = 10;
-// Light: our planning rule. About a day of darkness is what small landers ride out on batteries; three days needs heaters and a large battery.
-const GOOD_DARK_H = 24;
-const MARGINAL_DARK_H = 72;
-const GOOD_SUN_SHARE = 0.8;
-const MARGINAL_SUN_SHARE = 0.5;
+// Light: does the mission fit inside the sunlight? Good = the Sun stays up the whole mission (flickers under
+// an hour ignored); Marginal = a short dark gap, usually at the start or end; Poor = longer darkness. Our planning rule.
+const GOOD_DARK_H = 1;
+const MARGINAL_DARK_H = 12;
 const GOOD_GAP_H = 24;
 const MARGINAL_GAP_H = 120;
 const GOOD_SHARE = 0.3;
@@ -86,12 +85,12 @@ export function lightVerdict(sun: readonly VisWindow[], start: string, stop: str
   const dark = longestGap(sun, start, stop);
   const sunAtTouchdown = sun.some((w) => toMs(w.start) <= t0 && t0 < toMs(w.end));
   const level: VerdictLevel = sunH === 0 ? "poor"
-    : dark <= Math.min(GOOD_DARK_H, missionH) && share >= GOOD_SUN_SHARE ? "good"
-    : dark <= Math.min(MARGINAL_DARK_H, missionH) && share >= MARGINAL_SUN_SHARE ? "marginal"
+    : dark < GOOD_DARK_H ? "good"
+    : dark <= MARGINAL_DARK_H ? "marginal"
     : "poor";
   const facts = `Sun up ${r0(share * 100)}% of the time, longest dark spell ${plainDuration(dark)}`;
   const reason = sunH === 0 ? "The Sun never clears the terrain during this plan."
-    : level === "good" ? `Steady sunlight: ${facts}.` : level === "marginal" ? `Patchy sunlight: ${facts}.` : `Long darkness: ${facts}.`;
+    : level === "good" ? `The whole mission fits inside the sunlight: ${facts}.` : level === "marginal" ? `Almost fits inside the sunlight: ${facts}.` : `The mission runs into darkness: ${facts}.`;
   return { level, reason, sunPct: share * 100, longestDarkH: dark, sunAtTouchdown };
 }
 

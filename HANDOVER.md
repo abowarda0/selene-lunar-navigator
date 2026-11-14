@@ -12,7 +12,7 @@ Near the Moon's south pole the Sun skims the horizon, so a single hill can hide 
 - **Time left at touchdown** until sunset and until Earth contact ends.
 - **What a launch slip does**, the **best dates** for a site, the **best sites** for a date, and side-by-side **comparison**.
 
-The verdict (Good / Marginal / Poor) is based on **light and Earth contact only**. A battery simulator exists as an **optional** power check.
+The verdict (Good / Marginal / Poor) asks **does the mission fit inside the sunlight, and can it talk to Earth**. A battery simulator exists as an **optional** power check.
 
 The challenge text is in `ref/nasachall11.pdf`.
 
@@ -68,7 +68,7 @@ Details are in `server/README.md`. The key stays on the server. The server check
 | Sun visible | **Any part of the disc** above the terrain skyline | NASA's illumination maps use the same rule, and a panel gets power from a partly visible Sun. A test showed the old "top point above centre" rule moved polar sunrise and sunset times by up to 18 min |
 | Earth contact | A NASA DSN 70 m dish (Goldstone, Canberra, Madrid; positions from the NAIF kernel) is above the lander's skyline **and** the Moon is ≥ 10° up at the dish | DSN handbook 810-005 module 101: no transmission below 10°. Two-way link |
 | Listen-only | Dish 6–10° up | Module 302: dishes cannot point below 6°. Data comes home, but no commands can be sent |
-| Verdict | Worse of **light** (good: Sun ≥ 80% and longest dark ≤ 24 h; marginal: ≥ 50% and ≤ 72 h) and **contact** (good: link ≥ 30% and longest silence ≤ 24 h; marginal: ≥ 10% and ≤ 120 h) | Our own rule of thumb, labelled as such in the app. Not a NASA standard |
+| Verdict | Worse of **light**: does the mission fit inside the sunlight? (good: no dark spell of an hour or more; marginal: one gap up to 12 h, usually at the start or end; poor: longer darkness) and **contact** (good: link ≥ 30% and longest silence ≤ 24 h; marginal: ≥ 10% and ≤ 120 h) | Matches how real missions are planned (Chandrayaan-3 landed at local sunrise for one lunar day). Our own rule, labelled as such in the app. Not a NASA standard |
 | Battery | Optional energy bookkeeping with illustrative lander classes | The challenge asks for Sun and Earth windows, not battery design. Kept as an optional check |
 | Lander height | 2 m (deck); a separate 10 m "mast" skyline exists | NASA plans solar masts at the pole; a mast sees over nearby hills |
 

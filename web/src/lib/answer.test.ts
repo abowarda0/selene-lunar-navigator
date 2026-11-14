@@ -41,14 +41,14 @@ describe("answerSentence", () => {
     // Act
     const a = answerSentence(pp, rover, 30);
     // Assert
-    expect(a.lead).toBe("The Sun stays behind the terrain for 10 days (240 h) in a row during your 30 days (up 45% of the time).");
-    expect(a.fix).toMatch(/another landing date/);
+    expect(a.lead).toBe("Your 30 days run into darkness: the Sun stays behind the terrain for 10 days (240 h) in a row (up 45% of the time).");
+    expect(a.fix).toMatch(/fit inside the sunlight/);
     expect(a.power).toBe("A rover would run out of power 14 days (336 h) after landing; it would need a battery of at least 9.4 kWh.");
   });
 
   test("no hint when the light is good", () => {
-    const a = answerSentence(plan(power({}), "good", comms("good"), light("good", 95, 10)), rover, 14);
-    expect(a.lead).toBe("Sunlight for 95% of your 14 days; the longest dark spell is only 10 h.");
+    const a = answerSentence(plan(power({}), "good", comms("good"), light("good", 99, 0.5)), rover, 14);
+    expect(a.lead).toBe("Your 14 days fit inside the sunlight: the Sun is up 99% of the time, with no dark spell longer than an hour.");
     expect(a.fix).toBeNull();
   });
 
@@ -71,7 +71,7 @@ describe("lightSentence", () => {
     expect(lightSentence(light("poor", 0, 720), 30)).toBe("The Sun never clears the terrain during your 30 days.");
   });
   test("patchy light", () => {
-    expect(lightSentence(light("marginal", 62, 50), 30)).toBe("Patchy sunlight: the Sun is up 62% of your 30 days, with a dark spell of 50 h.");
+    expect(lightSentence(light("marginal", 97, 9), 14)).toBe("Your 14 days almost fit inside the sunlight: the Sun is up 97% of the time, with one dark spell of 9 h.");
   });
 });
 

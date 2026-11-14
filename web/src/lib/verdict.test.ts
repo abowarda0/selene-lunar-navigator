@@ -46,19 +46,19 @@ describe("commsVerdict", () => {
 });
 
 describe("lightVerdict", () => {
-  test("good when the Sun is up most of the time and dark spells are short", () => {
-    const sun = [w("2027-01-01T00:00Z", "2027-01-03T12:00Z"), w("2027-01-03T20:00Z", "2027-01-05T00:00Z")];
+  test("good when the whole mission fits inside the sunlight (a flicker under an hour is ignored)", () => {
+    const sun = [w("2027-01-01T00:00Z", "2027-01-02T12:00Z"), w("2027-01-02T12:30Z", "2027-01-05T00:00Z")];
     const v = lightVerdict(sun, T0, "2027-01-05T00:00Z");
     expect(v.level).toBe("good");
-    expect(v.longestDarkH).toBe(8);
+    expect(v.longestDarkH).toBe(0.5);
   });
-  test("marginal with a dark spell over a day", () => {
-    const sun = [w("2027-01-01T00:00Z", "2027-01-02T00:00Z"), w("2027-01-03T12:00Z", "2027-01-08T00:00Z")];
-    expect(lightVerdict(sun, T0, "2027-01-08T00:00Z").level).toBe("marginal");
+  test("marginal with a short dark gap at the start", () => {
+    const sun = [w("2027-01-01T08:00Z", "2027-01-05T00:00Z")];
+    expect(lightVerdict(sun, T0, "2027-01-05T00:00Z").level).toBe("marginal");
   });
-  test("poor with days of darkness, and never-lit is poor", () => {
-    const sun = [w("2027-01-01T00:00Z", "2027-01-02T00:00Z")];
-    expect(lightVerdict(sun, T0, "2027-01-08T00:00Z").level).toBe("poor");
+  test("poor when the mission runs into night, and never-lit is poor", () => {
+    const sun = [w("2027-01-01T00:00Z", "2027-01-03T00:00Z")];
+    expect(lightVerdict(sun, T0, "2027-01-05T00:00Z").level).toBe("poor");
     expect(lightVerdict([], T0, "2027-01-02T00:00Z").level).toBe("poor");
   });
 });

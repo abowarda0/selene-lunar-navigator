@@ -36,9 +36,9 @@ export function lightSentence(l: Pick<LightVerdict, "level" | "sunPct" | "longes
   const pct = r0(l.sunPct);
   if (l.sunPct <= 0) return `The Sun never clears the terrain during your ${days} days.`;
   if (l.longestDarkH <= 0) return `The Sun stays up for all ${days} days: it never drops behind the terrain.`;
-  if (l.level === "good") return `Sunlight for ${pct}% of your ${days} days; the longest dark spell is only ${plainDuration(l.longestDarkH)}.`;
-  if (l.level === "marginal") return `Patchy sunlight: the Sun is up ${pct}% of your ${days} days, with a dark spell of ${plainDuration(l.longestDarkH)}.`;
-  return `The Sun stays behind the terrain for ${plainDuration(l.longestDarkH)} in a row during your ${days} days (up ${pct}% of the time).`;
+  if (l.level === "good") return `Your ${days} days fit inside the sunlight: the Sun is up ${pct}% of the time, with no dark spell longer than an hour.`;
+  if (l.level === "marginal") return `Your ${days} days almost fit inside the sunlight: the Sun is up ${pct}% of the time, with one dark spell of ${plainDuration(l.longestDarkH)}.`;
+  return `Your ${days} days run into darkness: the Sun stays behind the terrain for ${plainDuration(l.longestDarkH)} in a row (up ${pct}% of the time).`;
 }
 
 /** The battery result in words, for the optional power check. */
@@ -55,6 +55,6 @@ export function powerSentence(pp: PowerPlan, lander: LanderPlan, days: number): 
 
 export function answerSentence(pp: PowerPlan, lander: LanderPlan, days: number): Answer {
   const l = pp.verdict.light;
-  const fix = l.level === "good" ? null : "Try another landing date (Best dates) or a nearby site with shorter dark spells (Best sites).";
+  const fix = l.level === "good" ? null : "To fit inside the sunlight, try another landing date (Best dates), a shorter mission, or another site (Best sites).";
   return { lead: lightSentence(l, days), comms: commsSentence(pp.verdict.comms), fix, power: powerSentence(pp, lander, days) };
 }
