@@ -12,9 +12,9 @@ Near the Moon's south pole the Sun skims the horizon, so a single hill can hide 
 - **Time left at touchdown** until sunset and until Earth contact ends.
 - **What a launch slip does**, the **best dates** for a site, the **best sites** for a date, and side-by-side **comparison**.
 
-The verdict (Good / Marginal / Poor) asks **does the mission fit inside the sunlight, and can it talk to Earth**. A battery simulator exists as an **optional** power check.
+The verdict (Good / Marginal / Poor) asks **does the mission fit inside the sunlight, and can it talk to Earth**. Every page explains the colours in plain words. A battery simulator exists as an **optional** power check.
 
-The challenge text is in `ref/nasachall11.pdf`.
+The challenge text is in `ref/nasachall11.pdf`. The code is in the private GitHub repo `yossefhady/selene-lunar-navigator` (branch `main`). Ask the owner to add you as a collaborator.
 
 ---
 
@@ -33,7 +33,7 @@ The app runs fully from the data files already in `web/public/data/`. No downloa
 
 Checks:
 ```bash
-cd web && npx vitest run && npx tsc -b --noEmit && npx vite build     # 149 tests
+cd web && npx vitest run && npx tsc -b --noEmit && npx vite build     # 150 tests
 cd spike && python3 -m pytest -q --cov=lunar                          # 85 tests, 88% coverage
 ```
 
@@ -123,22 +123,41 @@ python3 export_heightmaps.py   # height_*.json for the 3D view (150 km, 401 x 40
 | `spike/build_dataset.py` | Builds all site data. Site list and terrain layers are at the top |
 | `spike/pick_sites.py` | Artemis III sample points: anchor = centre of LROC's region mosaic, then the best-lit 120 m pixel within 8 km |
 | `contract/CONTRACT.md` | Data format, v1 → v1.3 (latest sections at the bottom) |
-| `web/src/lib/` | Pure logic with tests: `analysis` (clip windows), `verdict` (light + contact), `answer` (plain sentences), `rank` (best dates/sites), `power` + `suggest` (optional battery), `guide` (Luna + number guard), `heightmap` |
-| `web/src/selene/` | Pages and components: `Home`, `PlanPage`, `BestDates`, `BestSites`, `ComparePage`, `MethodPage`, `Terrain3D`, `MoonGlobe3D`, `Luna`, `theme.css` (look) |
+| `web/src/lib/` | Pure logic with tests: `analysis` (clip windows), `verdict` (light + contact; **the thresholds live here as exported constants: change them only here**), `answer` (plain sentences), `rank` (best dates/sites), `now` (time to the next sunrise/sunset), `power` + `suggest` (optional battery), `guide` (Luna + number guard), `heightmap` |
+| `web/src/selene/` | Pages and components: `Home`, `PlanPage`, `BestDates`, `BestSites`, `ComparePage`, `MethodPage`, `Tiles`, `Terrain3D`, `MoonGlobe3D`, `Luna`, `VerdictKey` (the colour explanation, built from the verdict thresholds and checked by a test), `SuggestCard`, `SiteCards`, `theme.css` (look; loaded last) |
 | `server/assistant.mjs` | Gemini proxy for Luna (no dependencies) |
 | `design/UX_SPEC*.md` | The UX specs the app was built from |
 | `ACHIEVEMENTS.md` | Every result with numbers |
+
+### What each page shows
+| Page | Contents |
+|---|---|
+| **Home** | Full-width hero with the Mission Setup card (tabs: I have both / I have a site / I have a date) and a real 3D Moon. Click a pin to fly to a site and open its plan. A small preview card shows the hovered site's real terrain |
+| **Plan** ("Mission Analysis.") | 1. Plain answer about light, then contact, with a hint when the mission doesn't fit the sunlight. 2. "What do Good, Marginal and Poor mean?" (expandable). 3. Launch-slip comparison ("What if launch is late?"). 4. Four tiles: Sunlight, Contact with Earth, **Time left at touchdown** (sunrise/sunset and Earth contact, in minutes under an hour), Ground slope. 5. 3D landing site: 150 × 150 km of real terrain lit by the true Sun, with Earth at its true position, a play button, Overview and Lander's-eye cameras, and a height switch (True / ×2 / ×4, default ×2). 6. **Power check (optional)**, collapsed: battery chart, lander sliders, the 10 m pole switch, and Suggested setups that survive the plan. 7. Talking to Earth: two-way / listen-only / no-contact bar and a radio choice (0.1 / 1 / 10 Mbps, illustrative) for the data estimate. 8. The ground card. 9. Timeline. 10. Technical details |
+| **Best dates** | 14-month calendar, one square per landing day at 00:00 UTC, coloured by verdict, with the colour key underneath. Ranked table: sunlight and darkness first, contact next, battery last as a check |
+| **Best sites** | All 12 sites ranked for one date and length, with the colour key |
+| **Compare** | Up to 3 plans side by side from the "+ Compare" buttons, best value per row marked, and "Choose this plan" |
+| **How it works** | Method, sources, validation, what the colours mean, limits, glossary |
 
 Older docs (`HANDOFF_PROMPT.md`, `FRONTEND_HANDOFF.md`, `APP_SCREENS.md`, `PRODUCT.md`, `DESIGN.md`) describe earlier stages and are partly out of date. Trust this file and `ACHIEVEMENTS.md`.
 
 ---
 
-## 7. Still open (most useful first)
+## 7. Decisions made with the project owner (and why)
+These came out of reviews with the owner. Keep them unless you agree a change with him.
+- **The challenge is about light and Earth contact, not battery design.** The verdict, the headline and the rankings use sunlight and contact only. The battery simulator stays, collapsed, as an optional check.
+- **"Good" means the whole mission fits inside the sunlight.** For example, at Chandrayaan-3 the Sun is up from 13 Dec 2026 20:31 to 28 Dec 15:18 UTC (14.8 days). A 14-day mission is Good only when landing on 14 Dec. Landing 15 Dec is Marginal (the last 8.7 h are after sunset), and the other days are Poor. That's why the Best dates calendar shows about one green day per month for a 14-day mission, and many more for a 7-day one.
+- **Colours must always be explained:** the key appears under the calendar, on Best sites, on Plan (expandable) and on How it works.
+- **The data rate is not a free number.** It's set by the antenna, the transmitter power and the distance (the link budget), so the app offers three antenna classes, labelled illustrative.
+- **The look follows the teammate's SELENE design:** the S-orbit logo, the "Your next landing. In a new light." hero, the Mission Setup card and the big Moon. Spacecraft choice comes after planning (on Plan), not on Home. There's one 10 m pole switch, in the power check.
+- **The 3D should be big and show mountains:** 150 km, heights ×2 by default, with True heights one click away. The Home Moon is side-lit for a real day/night edge, with small ringed pins.
+
+## 8. Still open (most useful first)
 1. **Gemini key:** Luna's free-text answers need a key (section 2). Not tested with a real key yet.
 2. **Official region outlines:** download `A3_9regions-lonlat-simplified.zip` (622 KB) from the USGS ScienceBase item for DOI 10.5066/P1MEQ6UK (it needs a browser "verify you are human" click). Check each sample point falls inside its region, and re-pick any that don't (`pick_sites.py`). Our points come from LROC mosaic centres, so they're close but not proven to be inside.
 3. **Re-validate the current engine** against NASA's maps (section 4 gap).
 4. **Custom coordinates:** needs a small backend that runs the pipeline for one point (about 1.5–2 min the first time, then cached). Today only the 12 precomputed sites work, and the app says so.
-5. **Deploy** (section 8).
+5. **Deploy** (section 9).
 6. **Clean-up:** `web/public/data/scenario_*.json` (660 files, 76 MB) and `sweep_*.json` are no longer used by the app and can be deleted, which roughly halves the data size. `year_nobile_rim.json` is a stale leftover from an old site id. `three` makes the JS bundle 744 KB, so consider code-splitting the 3D views.
 7. **Phone layout** is not tested.
 8. **Illustrative numbers:** lander classes and radio speeds are labelled illustrative. Replace them with sourced values if you want them in the main story.
@@ -146,19 +165,19 @@ Older docs (`HANDOFF_PROMPT.md`, `FRONTEND_HANDOFF.md`, `APP_SCREENS.md`, `PRODU
 
 ---
 
-## 8. Publishing on a real site: what it takes and how fast it is
+## 9. Publishing on a real site: what it takes and how fast it is
 
-**Easiest:** the app is a static site. Run `cd web && npx vite build`, then upload `web/dist/` (about 97 MB with data, about 20 MB after the clean-up in item 6) to any static host: GitHub Pages, Netlify, Cloudflare Pages or Vercel.
+**Easiest:** the app is a static site. Run `cd web && npx vite build`, then upload `web/dist/` (about 97 MB with data, about 20 MB after the clean-up in section 8, item 6) to any static host: GitHub Pages, Netlify, Cloudflare Pages or Vercel.
 - **Setup time:** about 15–30 minutes the first time. Each later deploy is a 2-second build plus the upload.
 - **For visitors:**
   - First load: about 0.8 MB of JavaScript, plus about 550 KB of data for the chosen site (about 150 KB compressed). Typically 1–3 s on a normal connection.
   - After that, every analysis, ranking and comparison runs in the browser: a few milliseconds, and about 0.5 s for "Best dates" (about 400 simulated landings).
 - **Luna's AI:** host `server/assistant.mjs` on any free Node host (for example Render or Railway), with `GEMINI_API_KEY` set as a secret. Or run it with `STATIC_DIR=web/dist` so one server serves both the site and the AI. An AI answer takes about 1–3 s.
-- **A brand-new location** would need the backend from open item 4: about 1.5–2 min the first time, instant after caching.
+- **A brand-new location** would need the backend from section 8, item 4: about 1.5–2 min the first time, instant after caching.
 
 ---
 
-## 9. Data sources (cite these)
+## 10. Data sources (cite these)
 - JPL Horizons API (DE441), ssd.jpl.nasa.gov.
 - NASA LRO LOLA polar DEMs and illumination maps (PDS Geosciences; Mazarico et al. 2011).
 - NASA DSN Telecommunications Link Design Handbook 810-005, modules 101 and 302 (copies in `ref/dsn/`).
