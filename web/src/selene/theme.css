@@ -270,3 +270,5 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; gap: 8
 .so-try > span b { color: var(--text-primary); }
 .so-try-btn { min-height: 34px; padding: 0 14px; }
 .so-note { margin: 0; padding: 6px 10px; font-size: 13px; color: var(--text-secondary); background: var(--bg-main); border-left: 3px solid var(--accent-primary); border-radius: var(--r-sm); }
+.so-svg .so-empty { stroke: var(--border-strong); stroke-dasharray: 4 3; }
+.so-svg .so-empty-text { font: 600 12px var(--f-body); fill: var(--text-secondary); }

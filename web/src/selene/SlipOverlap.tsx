@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactElement } from "react";
 import type { YearData } from "../api/types";
 import { useWidth } from "../hooks";
-import { compareSlip, FIRST_HOURS, overlapFirst, overlapHeadline, overlapWhy, spanHours, steadyNote, type Cause, type EarthMode, type Overlap72, type Span } from "../lib/overlap72";
+import { compareSlip, emptyReason, FIRST_HOURS, overlapFirst, overlapHeadline, overlapWhy, spanHours, steadyNote, type Cause, type EarthMode, type Overlap72, type Span } from "../lib/overlap72";
 
 interface Props {
   readonly year: YearData;
@@ -30,14 +30,16 @@ const MISSING: Record<EarthMode, Record<Cause["missing"], string>> = {
   link: { sun: "Sun behind the hills", earth: "no NASA dish in reach", both: "Sun down, no dish in reach" },
 };
 
-function Row({ y, label, o, marks, sc }: { y: number; label: string; o: Overlap72; marks: readonly Cause[]; sc: Scale }): ReactElement {
+function Row({ y, label, o, marks, sc, mode, pattern = "so-both" }: { y: number; label: string; o: Overlap72; marks: readonly Cause[]; sc: Scale; mode: EarthMode; pattern?: string }): ReactElement {
   const { x, wd, plot } = sc;
   const PLOT = plot;
+  const empty = emptyReason(o, mode);
   return (
     <g>
       <text x={PAD_L - 8} y={y + 12} textAnchor="end" className="so-lab">{label}</text>
-      <rect x={PAD_L} y={y} width={PLOT} height={BAR_H} className="so-track" />
-      {o.both.map((s) => <rect key={`b${s[0]}`} x={x(s[0])} y={y} width={wd(s)} height={BAR_H} fill="url(#so-both)" />)}
+      <rect x={PAD_L} y={y} width={PLOT} height={BAR_H} className={empty ? "so-track so-empty" : "so-track"} />
+      {o.both.map((s) => <rect key={`b${s[0]}`} x={x(s[0])} y={y} width={wd(s)} height={BAR_H} fill={`url(#${pattern})`} />)}
+      {empty && <text x={PAD_L + PLOT / 2} y={y + 12.5} textAnchor="middle" className="so-empty-text">{empty}</text>}
       {marks.map((c) => (
         <g key={`${c.kind}${c.span[0]}`}>
           <rect x={x(c.span[0])} y={y - 3} width={wd(c.span)} height={BAR_H + 6} className={`so-${c.kind}`} />
@@ -117,8 +119,8 @@ export function SlipOverlap({ year, plannedStart, lateStart, delayLabel }: Props
             <text x={x(t)} y={H - 4} textAnchor={t === 0 ? "start" : t === FIRST_HOURS ? "end" : "middle"} className="so-tick">+{t} h</text>
           </g>
         ))}
-        <Row y={6} label="Planned" o={s.planned} marks={s.causes.filter((c) => c.kind === "gained")} sc={sc} />
-        <Row y={6 + ROW_H} label={`Late +${delayLabel}`} o={s.late} marks={s.causes.filter((c) => c.kind === "lost")} sc={sc} />
+        <Row y={6} label="Planned" o={s.planned} marks={s.causes.filter((c) => c.kind === "gained")} sc={sc} mode={mode} />
+        <Row y={6 + ROW_H} label={`Late +${delayLabel}`} o={s.late} marks={s.causes.filter((c) => c.kind === "lost")} sc={sc} mode={mode} />
       </svg>
       </div>
 
@@ -172,7 +174,7 @@ export function OverlapStart({ year, plannedStart, onPickDelay }: { readonly yea
           ))}
         </div>
       </div>
-      <p className="so-headline">{h1(a)} h of power + comms overlap ({mode === "view" ? "Sun and Earth both in view" : "Sun and a DSN link together"}) in the first {FIRST_HOURS} h.</p>
+      <p className="so-headline">{a < 0.05 ? "No" : `${h1(a)} h of`} power + comms overlap ({mode === "view" ? "Sun and Earth both in view" : "Sun and a DSN link together"}) in the first {FIRST_HOURS} h.</p>
       {steadyNote([o], mode) && <p className="so-note" role="note">{steadyNote([o], mode)}</p>}
       <dl className="so-figs">
         <div><dt>This plan</dt><dd className="mono">{h1(a)} h</dd></div>
@@ -191,15 +193,7 @@ export function OverlapStart({ year, plannedStart, onPickDelay }: { readonly yea
               <text x={sc.x(t)} y={H - 4} textAnchor={t === 0 ? "start" : t === FIRST_HOURS ? "end" : "middle"} className="so-tick">+{t} h</text>
             </g>
           ))}
-          <g>
-            <text x={PAD_L - 8} y={18} textAnchor="end" className="so-lab">This plan</text>
-            <rect x={PAD_L} y={6} width={sc.plot} height={BAR_H} className="so-track" />
-            {o.both.map((s) => <rect key={`b${s[0]}`} x={sc.x(s[0])} y={6} width={sc.wd(s)} height={BAR_H} fill="url(#so-both-start)" />)}
-            <rect x={PAD_L} y={6 + BAR_H + 2} width={sc.plot} height={STRIP_H} className="so-track" />
-            {o.sun.map((s) => <rect key={`s${s[0]}`} x={sc.x(s[0])} y={6 + BAR_H + 2} width={sc.wd(s)} height={STRIP_H} fill="var(--accent-warm)" />)}
-            <rect x={PAD_L} y={6 + BAR_H + STRIP_H + 4} width={sc.plot} height={STRIP_H} className="so-track" />
-            {o.earth.map((s) => <rect key={`e${s[0]}`} x={sc.x(s[0])} y={6 + BAR_H + STRIP_H + 4} width={sc.wd(s)} height={STRIP_H} fill="var(--accent-primary)" />)}
-          </g>
+          <Row y={6} label="This plan" o={o} marks={[]} sc={sc} mode={mode} pattern="so-both-start" />
         </svg>
       </div>
       <div className="so-try">

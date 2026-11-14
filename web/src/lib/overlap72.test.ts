@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import type { VisWindow, YearData } from "../api/types";
-import { compareSlip, overlapFirst, overlapHeadline, overlapWhy, spanHours, steadyNote, subtract } from "./overlap72";
+import { compareSlip, emptyReason, overlapFirst, overlapHeadline, overlapWhy, spanHours, steadyNote, subtract } from "./overlap72";
 import { analyze } from "./analysis";
 
 const w = (start: string, end: string): VisWindow => ({ start, end, hours: (Date.parse(end) - Date.parse(start)) / 3.6e6, open_start: false, open_end: false });
@@ -92,5 +92,20 @@ describe("72 h overlap stays consistent with the validated engine (all sites, ev
       expect(o).toBeLessThanOrEqual(Math.min(su, ea) + 0.02);
       expect(o).toBeGreaterThanOrEqual(su + ea - 72 - 0.02);
     }
+  });
+});
+
+describe("empty overlap wording", () => {
+  const base = { start: "x", hours: 72 };
+  it("names what is missing when there is no overlap", () => {
+    expect(emptyReason({ ...base, both: [], sun: [[52, 72]], earth: [] }, "view")).toBe("No overlap: Earth hidden all 72 h");
+    expect(emptyReason({ ...base, both: [], sun: [], earth: [] }, "view")).toBe("No overlap: Sun down and Earth hidden all 72 h");
+    expect(emptyReason({ ...base, both: [], sun: [[0, 10]], earth: [[20, 72]] }, "view")).toBe("No overlap: the Sun and Earth are never up at the same time");
+    expect(emptyReason({ ...base, both: [[0, 5]], sun: [[0, 5]], earth: [[0, 72]] }, "view")).toBeNull();
+  });
+  it("does not say 'keeps the same 0.0 h' when neither date has overlap", () => {
+    const y = (JSON.parse(readFileSync("public/data/year_polar_mid.json", "utf8")) as { data: YearData }).data;
+    const s = compareSlip(y, "2027-03-21T00:00Z", "2027-03-28T00:00Z", "view")!;
+    expect(overlapHeadline("7 d", s, "view")).toBe("No power + comms overlap (Sun and Earth both in view) on either date in the first 72 h.");
   });
 });

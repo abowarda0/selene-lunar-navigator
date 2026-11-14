@@ -112,8 +112,21 @@ export function overlapHeadline(delayLabel: string, s: SlipOverlap, mode: EarthM
   const a = spanHours(s.planned.both);
   const b = spanHours(s.late.both);
   const what = WHAT[mode];
+  if (a < 0.05 && b < 0.05) return `No ${what} on either date in the first ${FIRST_HOURS} h.`;
   if (Math.abs(s.deltaH) < 0.05) return `A ${delayLabel} delay keeps the same ${h1(a)} h of ${what} in the first ${FIRST_HOURS} h.`;
   return `A ${delayLabel} delay ${s.deltaH < 0 ? "loses" : "gains"} ${h1(Math.abs(s.deltaH))} h of ${what} in the first ${FIRST_HOURS} h (${h1(a)} → ${h1(b)} h).`;
+}
+
+/** Text for an empty overlap bar: what is missing during the whole 72 h (or that the two never meet). */
+export function emptyReason(o: Overlap72, mode: EarthMode): string | null {
+  if (spanHours(o.both) > 0.05) return null;
+  const sunNone = spanHours(o.sun) <= 0.05;
+  const earthNone = spanHours(o.earth) <= 0.05;
+  const earth = mode === "view" ? "Earth hidden" : "no NASA dish in reach";
+  if (sunNone && earthNone) return `No overlap: Sun down and ${earth} all ${FIRST_HOURS} h`;
+  if (earthNone) return `No overlap: ${earth} all ${FIRST_HOURS} h`;
+  if (sunNone) return `No overlap: Sun down all ${FIRST_HOURS} h`;
+  return "No overlap: the Sun and Earth are never up at the same time";
 }
 
 /** The biggest change, in words: when it starts and what is missing. */
