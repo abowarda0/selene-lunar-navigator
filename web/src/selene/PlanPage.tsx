@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactElement } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState, type ReactElement } from "react";
 import type { Site } from "../api/types";
 import { useYear } from "../hooks";
 import { analyze, clip } from "../lib/analysis";
@@ -19,10 +19,13 @@ import { TechDetails } from "./TechDetails";
 import { Tiles } from "./Tiles";
 import { SuggestCard } from "./SuggestCard";
 import { VerdictKey } from "./VerdictKey";
-import { Terrain3D } from "./Terrain3D";
+// three.js is large: load the 3D view only when a Plan page shows it.
+const Terrain3D = lazy(() => import("./Terrain3D").then((m) => ({ default: m.Terrain3D })));
 import { usePublishGuide } from "./Luna";
 import { isInside } from "../lib/heightmap";
 import { bodyStateAt } from "../lib/now";
+import { earthViewWindows } from "../lib/earthView";
+import { maxSunElevation, sunHeightAt } from "../lib/sunHeight";
 
 const MS_PER_H = 3_600_000;
 const shortName = (s: Site): string => s.name.replace(/ \(sample point\)$/, "");
@@ -48,7 +51,15 @@ export function PlanPage({ sites, plan, onPlan, lander, onLander, onFindGood, in
   const [cursor, setCursor] = useState(0);
   const active = slip > 0 ? shiftPlan(plan, slip) : plan;
   const touchdown = touchdownOf(active);
-  useEffect(() => setCursor(0), [touchdown, plan.site, plan.hours]);
+  // Open the 3D view and cursor on the first sunlit moment, so a plan that lands in darkness does not start on a black scene.
+  useEffect(() => {
+    const yd = year.data;
+    if (!yd) { setCursor(0); return; }
+    const t0 = toMs(touchdown);
+    const first = yd.windows.sun.find((w) => toMs(w.end) > t0 && toMs(w.start) < t0 + plan.hours * MS_PER_H);
+    const h = first ? Math.max(0, (toMs(first.start) - t0) / MS_PER_H) : 0;
+    setCursor(Math.min(plan.hours, Math.ceil(h * 2) / 2));
+  }, [touchdown, plan.site, plan.hours, year.data]);
 
   const y = year.data;
   const a = useMemo(() => (y ? analyze(y, touchdown, active.hours) : null), [y, touchdown, active.hours]);
@@ -97,6 +108,10 @@ export function PlanPage({ sites, plan, onPlan, lander, onLander, onFindGood, in
   const cursorIso = new Date(toMs(a.start) + cursor * MS_PER_H).toISOString().slice(0, 16) + "Z";
   const idx = Math.max(0, Math.min(dome.series.t.length - 1, Math.round((toMs(cursorIso) - toMs(dome.series.t[0])) / (y.track.step_min * 60_000))));
   const receiveOnly = y.windows.receive_only ? clip(y.windows.receive_only, a.start, a.stop) : null;
+  const earthView = clip(earthViewWindows(y), a.start, a.stop);
+  const earthViewPct = (100 * earthView.reduce((h, w) => h + (toMs(w.end) - toMs(w.start)) / MS_PER_H, 0)) / a.hours;
+  const sunHeight = sunHeightAt(y, a.start);
+  const cursorSun = sunHeightAt(y, cursorIso);
   const dark = darkSpells(pp.chosen.sun, a.start, a.stop);
   const context = `${shortName(site)} · ${fmtUtc(a.start)} · ${days} days${slip > 0 ? ` · launch late by ${slip} h` : ""}`;
 
@@ -116,12 +131,15 @@ export function PlanPage({ sites, plan, onPlan, lander, onLander, onFindGood, in
       {!site.terrain && <div className="alert" role="note">No terrain data for this site: times assume a smooth Moon. Near the pole that is wrong by up to 62 pts.</div>}
 
       <Tiles pp={pp} hours={a.hours} slopeDeg={y.site_facts?.slope_deg ?? null}
-        sunNow={bodyStateAt(y.windows.sun, a.start, y.span_stop)} linkNow={bodyStateAt(y.windows.earth, a.start, y.span_stop)} />
+        sunNow={bodyStateAt(y.windows.sun, a.start, y.span_stop)} linkNow={bodyStateAt(y.windows.earth, a.start, y.span_stop)}
+        sunHeight={sunHeight} maxSunElDeg={maxSunElevation(y, a.start, a.stop)} earthViewPct={earthViewPct} />
       {site.terrain && (
+        <Suspense fallback={<section className="t3d card" aria-busy="true"><p className="muted">Loading the 3D landing site…</p></section>}>
         <Terrain3D siteId={site.id} siteName={shortName(site)} sunAz={dome.series.sun_az[idx]} sunEl={dome.series.sun_el[idx]}
           earthAz={dome.series.earth_az[idx]} earthEl={dome.series.earth_el[idx]} sunUp={isInside(pp.chosen.sun, cursorIso)}
-          linkUp={isInside(pp.link, cursorIso)} whenLabel={`Day ${(cursor / 24).toFixed(1)} · ${fmtUtc(cursorIso)}`}
+          linkUp={isInside(pp.link, cursorIso)} whenLabel={`Day ${(cursor / 24).toFixed(1)} · ${fmtUtc(cursorIso)}${cursorSun ? ` · Sun ${cursorSun.elDeg.toFixed(1)}° high` : ""}`}
           cursor={cursor} hours={a.hours} onCursor={setCursor} />
+        </Suspense>
       )}
       <details className="disc power-check">
         <summary><span><b>Power check (optional)</b> · {answerSentence(pp, lander, days).power}</span></summary>
@@ -138,8 +156,9 @@ export function PlanPage({ sites, plan, onPlan, lander, onLander, onFindGood, in
       <section className="card" aria-labelledby="tl-h">
         <h2 id="tl-h" className="sec-h">Timeline{slip > 0 ? ", late launch (thin rows: as planned)" : ""}</h2>
         <PlanTimeline start={a.start} hours={a.hours} sun={pp.chosen.sun} sunFactor={sunFactor} link={pp.link} receiveOnly={receiveOnly ?? []}
+          earthView={earthView}
           battery={pp.chosen.power.series} floorPct={lander.spec.minSocPct} dark={dark} ghost={ghost} cursor={cursor} onCursor={setCursor} />
-        <p className="src">Drag or use the slider to point at a moment. Hatched: listen-only contact (Earth low on the horizon).</p>
+        <p className="src">Drag or use the slider to point at a moment. Earth in view: any part of Earth above the hills (line of sight, from the 30-minute sky track, ±15 min). Earth link: a NASA dish can hold a two-way link. Hatched: listen-only contact (Earth low for the dish).</p>
       </section>
 
       <TechDetails site={site} dome={dome} idx={idx} events={a.events} mast={pp.chosen.mast} />

@@ -157,3 +157,51 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; gap: 8
 .vkey.compact .vkey-t { font-size: 12px; }
 .vkey-disc > summary { font-size: 14px; }
 @media (max-width: 800px) { .vkey ul { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---- final touches (Nov 2026) ---------------------------------------------------------------- */
+/* 24-hour ISO UTC field (replaces the browser's local-format date/time pickers) */
+.utc-in { display: flex; align-items: center; min-height: 40px; background: var(--bg-card); border: 1px solid var(--border-strong); border-radius: var(--r); padding: 0 10px; gap: 6px; }
+.utc-in:focus-within { outline: 2px solid var(--accent-primary); outline-offset: 1px; }
+.utc-in.bad { border-color: var(--danger); }
+.utc-in input { flex: 1; min-width: 0; min-height: 36px; border: 0; outline: none; background: transparent; color: var(--text-primary); font-size: 14px; padding: 0; }
+.setup-fields .utc-in input { min-height: 40px; }
+.utc-suffix { font-size: 12px; color: var(--text-muted); }
+.utc-err { font-size: 12px; color: var(--danger); }
+.planbar .utc-f { min-width: 210px; }
+.planbar .utc-in { min-height: 36px; }
+
+/* Live answer on Home */
+.quick { display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--border-strong); border-left-width: 4px; border-radius: var(--r-sm); background: var(--bg-main); min-height: 74px; }
+.quick.good { border-left-color: var(--success); } .quick.marginal { border-left-color: var(--warning); } .quick.poor { border-left-color: var(--danger); }
+.quick p { margin: 0; }
+.quick-lead { font-size: 14px; line-height: 1.4; color: var(--text-primary); }
+.quick-lead .vw { margin-right: 4px; }
+.quick-stats { font-size: 12px; color: var(--text-secondary); }
+
+/* Site, date and length on fewer rows so the button stays on the first screen */
+.setup-fields { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
+.setup-fields > :first-child:nth-last-child(3) { grid-column: 1 / -1; }
+
+/* Short screens (1366x768 projectors): smaller hero so the whole setup card fits */
+@media (min-width: 901px) and (max-height: 900px) {
+  .hero2-in { padding-top: 20px; padding-bottom: 20px; min-height: calc(100vh - 64px); }
+  .hero2-left { gap: 12px; }
+  .hero2-left .s-h1 { font-size: clamp(36px, 3.4vw, 50px); }
+  .hero2-left .s-kicker { display: none; }
+  .setup-card { gap: 12px; padding: 18px; }
+}
+
+/* Luna lives bottom-right, clear of the setup card and the plan forms */
+.luna { left: auto; right: max(16px, 2vw); flex-direction: row-reverse; }
+.luna-bubble, .luna-teaser { border-radius: 14px 14px 4px 14px; }
+
+/* Launch-slip headline */
+.slip-head { margin: 0 0 8px; padding: 10px 14px; border-left: 4px solid var(--border-strong); background: var(--bg-card); border-radius: var(--r-sm); font-size: 16px; font-weight: 600; line-height: 1.4; }
+.slip-head.good { border-left-color: var(--success); } .slip-head.marginal { border-left-color: var(--warning); } .slip-head.poor { border-left-color: var(--danger); }
+
+/* Calendar button inside the ISO date field; the native date input only provides its popup. */
+.utc-in { position: relative; }
+.utc-cal { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; margin-right: -6px; padding: 0; border: 0; border-radius: var(--r-sm); background: none; color: var(--text-secondary); cursor: pointer; }
+.utc-cal:hover { color: var(--accent-soft); background: var(--bg-hover); }
+.utc-cal:focus-visible { outline: 2px solid var(--accent-primary); outline-offset: 1px; }
+.utc-picker { position: absolute; right: 0; bottom: 0; width: 1px; height: 1px; padding: 0; border: 0; opacity: 0; pointer-events: none; }

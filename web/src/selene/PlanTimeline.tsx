@@ -11,6 +11,7 @@ const TOP = 26;
 const ROW = 20;
 const GHOST = 6;
 const GAP = 10;
+const VIEW_H = 10;
 const BAT_H = 110;
 const AXIS_H = 40;
 const MIN_TICK_PX = 90;
@@ -31,6 +32,8 @@ interface Props {
   readonly sunFactor?: SunFactor;
   readonly link: readonly VisWindow[];
   readonly receiveOnly: readonly VisWindow[];
+  /** Earth in view (line of sight, any part of the disc above the skyline); drawn as a thin row above the link. */
+  readonly earthView?: readonly VisWindow[];
   readonly battery: readonly SocPoint[];
   readonly floorPct: number;
   readonly dark: readonly DarkSpell[];
@@ -81,7 +84,8 @@ export function PlanTimeline(p: Props): ReactElement {
   const xm = (ms: number) => x((ms - t0) / MS_PER_H);
   const ghostH = p.ghost ? GHOST + 4 : 0;
   const ySun = TOP;
-  const yLink = ySun + ROW + ghostH + GAP;
+  const yView = ySun + ROW + ghostH + GAP;
+  const yLink = p.earthView ? yView + VIEW_H + 6 : yView;
   const yBat = yLink + ROW + ghostH + GAP;
   const yAxis = yBat + BAT_H;
   const H = yAxis + AXIS_H;
@@ -99,7 +103,7 @@ export function PlanTimeline(p: Props): ReactElement {
   const socAt = (h: number) => p.battery.reduce<SocPoint | null>((best, s) => (!best || Math.abs(s.h - h) < Math.abs(best.h - h) ? s : best), null)?.soc;
   const hv = hover;
   const hvMs = hv == null ? 0 : t0 + hv * MS_PER_H;
-  const hvText = hv == null ? "" : `${fmtUtc(new Date(hvMs).toISOString())} · +${hv} h · Sun ${inside(p.sun, hvMs) ? "up" : "down"} · link ${inside(p.link, hvMs) ? "open" : "closed"} · battery ${Math.round(socAt(hv) ?? 0)}%`;
+  const hvText = hv == null ? "" : `${fmtUtc(new Date(hvMs).toISOString())} · +${hv} h · Sun ${inside(p.sun, hvMs) ? "up" : "down"} ·${p.earthView ? ` Earth ${inside(p.earthView, hvMs) ? "in view" : "hidden"} ·` : ""} link ${inside(p.link, hvMs) ? "open" : "closed"} · battery ${Math.round(socAt(hv) ?? 0)}%`;
 
   const ghostBars = (ws: readonly VisWindow[], y: number, color: string) => {
     if (!p.ghost) return null;
@@ -132,7 +136,14 @@ export function PlanTimeline(p: Props): ReactElement {
         {sunPieces(p.sun, p.sunFactor).map((s) => <rect key={s.a} x={xm(s.a)} y={ySun} width={Math.max(1, xm(s.b) - xm(s.a))} height={ROW} fill="var(--accent-warm)" opacity={s.o} />)}
         {ghostBars(p.ghost?.sun ?? [], ySun + ROW + 4, "var(--accent-warm)")}
 
-        <text x={PAD_L - 8} y={yLink + 14} textAnchor="end" className="lane link">Earth</text>
+        {p.earthView && (
+          <g>
+            <text x={PAD_L - 8} y={yView + 9} textAnchor="end" className="lane link small">Earth in view</text>
+            <rect x={PAD_L} y={yView} width={plotW} height={VIEW_H} fill="var(--bg-card)" />
+            {p.earthView.map((w) => <rect key={`v${w.start}`} x={xm(toMs(w.start))} y={yView} width={Math.max(1, xm(toMs(w.end)) - xm(toMs(w.start)))} height={VIEW_H} fill="var(--accent-soft)" opacity={0.55} />)}
+          </g>
+        )}
+        <text x={PAD_L - 8} y={yLink + 14} textAnchor="end" className="lane link">Earth link</text>
         <rect x={PAD_L} y={yLink} width={plotW} height={ROW} fill="var(--bg-card)" />
         {p.receiveOnly.map((w) => <rect key={`r${w.start}`} x={xm(toMs(w.start))} y={yLink} width={Math.max(1, xm(toMs(w.end)) - xm(toMs(w.start)))} height={ROW} fill="url(#hatch)" />)}
         {p.link.map((w) => <rect key={w.start} x={xm(toMs(w.start))} y={yLink} width={Math.max(1, xm(toMs(w.end)) - xm(toMs(w.start)))} height={ROW} fill="var(--accent-primary)" />)}

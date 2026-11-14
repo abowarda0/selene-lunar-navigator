@@ -45,12 +45,12 @@ function planTips(f: GuideFacts, answer: string | null): string[] {
 
 const STATIC: Record<Exclude<GuideView, "plan">, readonly string[]> = {
   home: [
-    "Hi, I'm Luna. Tell me what you already know: a landing date, a site, or both, and I'll check sunlight, battery and contact with Earth.",
+    "Hi, I'm Luna. Tell me what you already know: a landing date, a site, or both, and I'll check sunlight and contact with Earth.",
     "The pins on the Moon are real candidate landing areas near the south pole. Click one to fly there.",
     "Everything here comes from NASA data: JPL Horizons for the Sun and Earth, LOLA laser maps for the mountains.",
   ],
   dates: [
-    "Each square is one landing day. Green is good, amber marginal, red poor, for the spacecraft you picked.",
+    "Each square is one landing day. Green is good, amber marginal, red poor, for the mission length you picked. Try 7 or 14 days: a 30-day mission is longer than one lunar day, so it always meets the night.",
     "Click a day to open its full analysis.",
   ],
   sites: [

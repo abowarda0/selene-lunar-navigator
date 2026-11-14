@@ -12,9 +12,15 @@ export interface Plan {
   readonly hours: number;
 }
 
-export const DEFAULT_PLAN: Plan = { site: "malapert_massif", date: "2027-03-16", time: "00:00", hours: 720 };
+/**
+ * Demo default: Mons Mouton Plateau (Artemis III region), landing 17 Dec 2026, 14 days. It is Good, and a
+ * 24 h launch slip turns it Poor (the mission ends in about 14 h of darkness): the challenge's slip story.
+ */
+export const DEFAULT_PLAN: Plan = { site: "mons_mouton_plateau", date: "2026-12-17", time: "00:00", hours: 336 };
 /** Plan durations offered in the plan bar, in days. */
 export const DURATION_DAYS: readonly number[] = [3, 7, 14, 30];
+/** Daylight at one spot lasts about 14.8 Earth days, so longer missions always meet the lunar night. */
+export const durationLabel = (days: number): string => `${days} days${days > 14.8 ? " (meets night)" : ""}`;
 
 export const touchdownOf = (p: Plan): string => `${p.date}T${p.time}Z`;
 

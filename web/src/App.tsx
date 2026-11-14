@@ -86,7 +86,7 @@ export function App(): ReactElement {
               </a>
             ))}
           </nav>
-          <span className="s-pill" title="JPL Horizons + NASA LOLA + NASA DSN, 1-minute steps">Real NASA data</span>
+          <span className="s-pill" title="JPL Horizons (DE441) positions every 10 min, visibility checked every minute against NASA LOLA terrain and the NASA DSN dishes">Real NASA data</span>
         </div>
         {ready && view !== "home" && <PlanBar sites={list} plan={plan} onPlan={onPlan} lander={lander} onLander={onLander} span={span} />}
       </header>
