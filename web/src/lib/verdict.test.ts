@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import type { VisWindow } from "../api/types";
-import { commsVerdict, planVerdict, powerVerdict } from "./verdict";
+import { commsVerdict, lightVerdict, planVerdict, powerVerdict } from "./verdict";
 import type { PowerResult } from "./power";
 
 const w = (start: string, end: string): VisWindow => ({ start, end, hours: 0, open_start: false, open_end: false });
@@ -45,16 +45,35 @@ describe("commsVerdict", () => {
   });
 });
 
+describe("lightVerdict", () => {
+  test("good when the Sun is up most of the time and dark spells are short", () => {
+    const sun = [w("2027-01-01T00:00Z", "2027-01-03T12:00Z"), w("2027-01-03T20:00Z", "2027-01-05T00:00Z")];
+    const v = lightVerdict(sun, T0, "2027-01-05T00:00Z");
+    expect(v.level).toBe("good");
+    expect(v.longestDarkH).toBe(8);
+  });
+  test("marginal with a dark spell over a day", () => {
+    const sun = [w("2027-01-01T00:00Z", "2027-01-02T00:00Z"), w("2027-01-03T12:00Z", "2027-01-08T00:00Z")];
+    expect(lightVerdict(sun, T0, "2027-01-08T00:00Z").level).toBe("marginal");
+  });
+  test("poor with days of darkness, and never-lit is poor", () => {
+    const sun = [w("2027-01-01T00:00Z", "2027-01-02T00:00Z")];
+    expect(lightVerdict(sun, T0, "2027-01-08T00:00Z").level).toBe("poor");
+    expect(lightVerdict([], T0, "2027-01-02T00:00Z").level).toBe("poor");
+  });
+});
+
 describe("planVerdict", () => {
-  test("takes the worse of power and comms", () => {
-    const link = [w("2027-01-01T00:00Z", "2027-01-04T00:00Z")];
-    const v = planVerdict(pr(25, true), 20, link, T0, "2027-01-04T00:00Z");
-    expect(v.level).toBe("marginal");
-    expect(v.comms.level).toBe("good");
+  test("takes the worse of light and contact; the battery does not set the level", () => {
+    const all = [w("2027-01-01T00:00Z", "2027-01-04T00:00Z")];
+    const v = planVerdict(pr(25, true), 20, all, all, T0, "2027-01-04T00:00Z");
+    expect(v.level).toBe("good");
+    expect(v.power.level).toBe("marginal");
     expect(v.warnings).toEqual([]);
   });
-  test("warns when there is no link at touchdown", () => {
-    const v = planVerdict(pr(50, true), 20, [w("2027-01-01T02:00Z", "2027-01-04T00:00Z")], T0, "2027-01-04T00:00Z");
-    expect(v.warnings).toEqual(["No link at touchdown"]);
+  test("warns when it is dark or there is no link at touchdown", () => {
+    const later = [w("2027-01-01T02:00Z", "2027-01-04T00:00Z")];
+    const v = planVerdict(pr(50, true), 20, later, later, T0, "2027-01-04T00:00Z");
+    expect(v.warnings).toEqual(["Dark at touchdown", "No link at touchdown"]);
   });
 });

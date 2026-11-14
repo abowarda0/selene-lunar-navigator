@@ -37,7 +37,7 @@ export function RankTable<T extends PlanMetrics>({ caption, lead, rows, pickLabe
           <thead>
             <tr>
               {lead.map((c) => <th key={c.head} className={c.num ? "num" : undefined}>{c.head}</th>)}
-              <th>Verdict</th><th className="num">Lowest battery (%)</th><th className="num">Sunlight (%)</th><th className="num">Contact with Earth (%)</th><th className="num">Longest silence (h)</th><th className="num">Longest without Sun (h)</th><th><span className="sr">Compare</span></th>
+              <th>Verdict</th><th className="num">Sunlight (%)</th><th className="num">Longest without Sun (h)</th><th className="num">Contact with Earth (%)</th><th className="num">Longest silence (h)</th><th className="num">Battery check (%)</th><th><span className="sr">Compare</span></th>
             </tr>
           </thead>
           <tbody>
@@ -49,11 +49,11 @@ export function RankTable<T extends PlanMetrics>({ caption, lead, rows, pickLabe
                   </td>
                 ))}
                 <td><VerdictWord level={row.verdict} /></td>
-                <td className="num">{r0(row.lowestSocPct)}</td>
                 <td className="num">{r0(row.sunPct)}</td>
+                <td className="num">{r0(row.longestDarkH)}</td>
                 <td className="num">{r0(row.linkPct)}</td>
                 <td className="num">{r0(row.longestLinkGapH)}</td>
-                <td className="num">{r0(row.longestDarkH)}</td>
+                <td className="num muted">{r0(row.lowestSocPct)}</td>
                 <td>
                   <button type="button" className="chip" aria-pressed={inCompare(row)} onClick={(e) => { e.stopPropagation(); onCompare(row); }}>
                     {inCompare(row) ? "✓ Compare" : "+ Compare"}

@@ -55,8 +55,10 @@ describe("compareMetrics", () => {
     expect(compareMetrics(m({ verdict: "good", lowestSocPct: 0 }), m({ verdict: "marginal", lowestSocPct: 99 }))).toBeLessThan(0);
     expect(compareMetrics(m({ verdict: "poor" }), m({ verdict: "marginal" }))).toBeGreaterThan(0);
   });
-  test("then by higher lowest battery", () => {
-    expect(compareMetrics(m({ lowestSocPct: 80 }), m({ lowestSocPct: 40 }))).toBeLessThan(0);
+  test("then by shorter dark spell, then more sunlight (battery does not rank)", () => {
+    expect(compareMetrics(m({ longestDarkH: 5 }), m({ longestDarkH: 40 }))).toBeLessThan(0);
+    expect(compareMetrics(m({ sunPct: 90 }), m({ sunPct: 60 }))).toBeLessThan(0);
+    expect(compareMetrics(m({ lowestSocPct: 80 }), m({ lowestSocPct: 40 }))).toBe(0);
   });
   test("then by shorter longest link gap", () => {
     expect(compareMetrics(m({ longestLinkGapH: 5 }), m({ longestLinkGapH: 30 }))).toBeLessThan(0);

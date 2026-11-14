@@ -1,6 +1,6 @@
 /**
- * Plan verdict: the worse of a power axis and a comms axis.
- * Comms thresholds are our planning rule, not a NASA requirement.
+ * Plan verdict: the worse of a light axis (Sun above the real horizon) and a contact axis (two-way DSN link).
+ * Power is evaluated too, but only for the optional power check. Thresholds are our planning rule, not a NASA requirement.
  */
 import type { VerdictLevel, VisWindow } from "../api/types";
 import { commsSentence, plainDuration } from "./answer";
@@ -8,6 +8,11 @@ import { toMs } from "./format";
 import { longestGap, type PowerResult } from "./power";
 
 const POWER_MARGIN_PTS = 10;
+// Light: our planning rule. About a day of darkness is what small landers ride out on batteries; three days needs heaters and a large battery.
+const GOOD_DARK_H = 24;
+const MARGINAL_DARK_H = 72;
+const GOOD_SUN_SHARE = 0.8;
+const MARGINAL_SUN_SHARE = 0.5;
 const GOOD_GAP_H = 24;
 const MARGINAL_GAP_H = 120;
 const GOOD_SHARE = 0.3;
@@ -28,8 +33,16 @@ export interface CommsVerdict extends AxisVerdict {
   readonly sharePct: number;
 }
 
+export interface LightVerdict extends AxisVerdict {
+  readonly sunPct: number;
+  readonly longestDarkH: number;
+  readonly sunAtTouchdown: boolean;
+}
+
 export interface PlanVerdict {
+  /** Worse of light and contact. Power is shown separately and does not set the level. */
   readonly level: VerdictLevel;
+  readonly light: LightVerdict;
   readonly power: AxisVerdict;
   readonly comms: CommsVerdict;
   readonly warnings: readonly string[];
@@ -64,13 +77,33 @@ export function commsVerdict(link: readonly VisWindow[], start: string, stop: st
   return { ...base, level, reason: commsSentence({ ...base, level }) };
 }
 
-export function planVerdict(power: PowerResult, minSocPct: number, link: readonly VisWindow[], start: string, stop: string): PlanVerdict {
+export function lightVerdict(sun: readonly VisWindow[], start: string, stop: string): LightVerdict {
+  const t0 = toMs(start);
+  const t1 = toMs(stop);
+  const missionH = (t1 - t0) / MS_PER_H;
+  const sunH = sun.reduce((h, w) => h + Math.max(0, Math.min(t1, toMs(w.end)) - Math.max(t0, toMs(w.start))) / MS_PER_H, 0);
+  const share = missionH > 0 ? sunH / missionH : 0;
+  const dark = longestGap(sun, start, stop);
+  const sunAtTouchdown = sun.some((w) => toMs(w.start) <= t0 && t0 < toMs(w.end));
+  const level: VerdictLevel = sunH === 0 ? "poor"
+    : dark <= Math.min(GOOD_DARK_H, missionH) && share >= GOOD_SUN_SHARE ? "good"
+    : dark <= Math.min(MARGINAL_DARK_H, missionH) && share >= MARGINAL_SUN_SHARE ? "marginal"
+    : "poor";
+  const facts = `Sun up ${r0(share * 100)}% of the time, longest dark spell ${plainDuration(dark)}`;
+  const reason = sunH === 0 ? "The Sun never clears the terrain during this plan."
+    : level === "good" ? `Steady sunlight: ${facts}.` : level === "marginal" ? `Patchy sunlight: ${facts}.` : `Long darkness: ${facts}.`;
+  return { level, reason, sunPct: share * 100, longestDarkH: dark, sunAtTouchdown };
+}
+
+export function planVerdict(power: PowerResult, minSocPct: number, sun: readonly VisWindow[], link: readonly VisWindow[], start: string, stop: string): PlanVerdict {
+  const l = lightVerdict(sun, start, stop);
   const p = powerVerdict(power, minSocPct);
   const c = commsVerdict(link, start, stop);
   return {
-    level: RANK[p.level] >= RANK[c.level] ? p.level : c.level,
+    level: RANK[l.level] >= RANK[c.level] ? l.level : c.level,
+    light: l,
     power: p,
     comms: c,
-    warnings: c.linkAtTouchdown ? [] : ["No link at touchdown"],
+    warnings: [...(l.sunAtTouchdown ? [] : ["Dark at touchdown"]), ...(c.linkAtTouchdown ? [] : ["No link at touchdown"])],
   };
 }

@@ -36,9 +36,9 @@ function planTips(f: GuideFacts, answer: string | null): string[] {
     tips.push(`Talking to Earth: one of NASA's three big dishes can reach the lander ${f.linkPct}% of the time.${has(f.longestSilenceH) ? ` The longest silence is ${f.longestSilenceH} h.` : ""}`);
   }
   if (has(f.batteryNeededKWh)) {
-    tips.push(`To get through this plan the battery would need about ${f.batteryNeededKWh} kWh. Try a different date in Best dates, or put the panels on the 10 m pole.`);
+    tips.push(`Optional power check: a battery of about ${f.batteryNeededKWh} kWh would get through this plan. Open Power check (optional) to try other spacecraft.`);
   }
-  tips.push("Not sure what spacecraft to bring? The Suggested setups card lists panel and battery sizes that survive this exact plan; press Use this to try one.");
+  tips.push("The Time left tile shows when the Sun sets and when Earth contact ends after landing: the two clocks a mission team watches.");
   tips.push("Press Play the mission in the 3D view to watch the Sun and shadows move over the real terrain.");
   return tips;
 }

@@ -68,8 +68,8 @@ def export(site_id: str, half_m: float, n: int) -> Path | None:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half-km", type=float, default=40.0)
-    ap.add_argument("--n", type=int, default=321)
+    ap.add_argument("--half-km", type=float, default=75.0)
+    ap.add_argument("--n", type=int, default=401)
     a = ap.parse_args()
     for site_id in B.SITES:
         export(site_id, a.half_km * 1000, a.n)

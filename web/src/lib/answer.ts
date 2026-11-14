@@ -1,7 +1,7 @@
-/** The plan's result in plain words: one power sentence, one contact sentence, and a fix when power fails. */
+/** The plan's result in plain words: light first, then contact, a hint when the light is poor, and the optional power line. */
 import type { LanderPlan, PresetId } from "./landers";
 import type { PowerPlan } from "./powerPlan";
-import type { CommsVerdict } from "./verdict";
+import type { CommsVerdict, LightVerdict } from "./verdict";
 
 const THREE_DAYS_H = 72;
 
@@ -10,8 +10,10 @@ const SPACECRAFT: Readonly<Record<PresetId, string>> = { small: "small lander", 
 export interface Answer {
   readonly lead: string;
   readonly comms: string;
-  /** What would fix a poor power result; null otherwise. */
+  /** What to try when the light is not good; null otherwise. */
   readonly fix: string | null;
+  /** Battery result for the optional power check. */
+  readonly power: string;
 }
 
 const r0 = (v: number): string => String(Math.round(v));
@@ -30,19 +32,29 @@ export function commsSentence(c: Pick<CommsVerdict, "level" | "sharePct" | "long
   return `Contact with Earth is not reliable enough: ${facts}.`;
 }
 
-export function answerSentence(pp: PowerPlan, lander: LanderPlan, days: number): Answer {
-  const who = `Your ${SPACECRAFT[lander.preset]}`;
+export function lightSentence(l: Pick<LightVerdict, "level" | "sunPct" | "longestDarkH">, days: number): string {
+  const pct = r0(l.sunPct);
+  if (l.sunPct <= 0) return `The Sun never clears the terrain during your ${days} days.`;
+  if (l.longestDarkH <= 0) return `The Sun stays up for all ${days} days: it never drops behind the terrain.`;
+  if (l.level === "good") return `Sunlight for ${pct}% of your ${days} days; the longest dark spell is only ${plainDuration(l.longestDarkH)}.`;
+  if (l.level === "marginal") return `Patchy sunlight: the Sun is up ${pct}% of your ${days} days, with a dark spell of ${plainDuration(l.longestDarkH)}.`;
+  return `The Sun stays behind the terrain for ${plainDuration(l.longestDarkH)} in a row during your ${days} days (up ${pct}% of the time).`;
+}
+
+/** The battery result in words, for the optional power check. */
+export function powerSentence(pp: PowerPlan, lander: LanderPlan, days: number): string {
+  const who = `A ${SPACECRAFT[lander.preset]}`;
   const p = pp.chosen.power;
-  const comms = commsSentence(pp.verdict.comms);
-  const level = pp.verdict.power.level;
-  if (level === "poor") {
+  if (pp.verdict.power.level === "poor") {
     const when = p.firstFloor ? ` ${plainDuration(p.firstFloor.hoursAfter)} after landing` : "";
-    return {
-      lead: `${who} would run out of power${when}, because the Sun stays behind the terrain for ${plainDuration(pp.chosen.longestDarkH)} in a row.`,
-      comms,
-      fix: `Needs a battery of at least ${p.batteryNeededKWh.toFixed(1)} kWh, or a different landing date (see Best dates).`,
-    };
+    return `${who} would run out of power${when}; it would need a battery of at least ${p.batteryNeededKWh.toFixed(1)} kWh.`;
   }
-  if (level === "marginal") return { lead: `${who} survives, but only just: the battery drops to ${r0(p.lowestSocPct)}%.`, comms, fix: null };
-  return { lead: `${who} keeps its power for all ${days} days. The battery never drops below ${r0(p.lowestSocPct)}%.`, comms, fix: null };
+  if (pp.verdict.power.level === "marginal") return `${who} gets through, but only just: the battery drops to ${r0(p.lowestSocPct)}%.`;
+  return `${who} keeps its power for all ${days} days; the battery never drops below ${r0(p.lowestSocPct)}%.`;
+}
+
+export function answerSentence(pp: PowerPlan, lander: LanderPlan, days: number): Answer {
+  const l = pp.verdict.light;
+  const fix = l.level === "good" ? null : "Try another landing date (Best dates) or a nearby site with shorter dark spells (Best sites).";
+  return { lead: lightSentence(l, days), comms: commsSentence(pp.verdict.comms), fix, power: powerSentence(pp, lander, days) };
 }

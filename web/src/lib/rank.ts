@@ -13,7 +13,7 @@ const MS_PER_H = 3_600_000;
 const MS_PER_DAY = 24 * MS_PER_H;
 const RANK: Readonly<Record<VerdictLevel, number>> = { good: 0, marginal: 1, poor: 2 };
 
-export const SORT_RULE = "Good plans first, then Marginal, then Poor. Within each: the battery that stays fullest, then the shortest silence from Earth, then the most contact.";
+export const SORT_RULE = "Good plans first, then Marginal, then Poor. Within each: the shortest dark spell, then the most sunlight, then the shortest silence from Earth, then the most contact.";
 
 export interface PlanMetrics {
   readonly start: string;
@@ -41,7 +41,7 @@ export function evaluatePlan(year: YearData, start: string, hours: number, lande
   const useMast = lander.mast && !!year.windows.sun_mast10;
   const o = panelOption(year, span, lander, useMast, link);
   if (!o) return null;
-  const v = planVerdict(o.power, lander.spec.minSocPct, link, span.start, span.stop);
+  const v = planVerdict(o.power, lander.spec.minSocPct, o.sun, link, span.start, span.stop);
   return {
     start: span.start,
     verdict: v.level,
@@ -55,7 +55,8 @@ export function evaluatePlan(year: YearData, start: string, hours: number, lande
 
 export function compareMetrics(a: PlanMetrics, b: PlanMetrics): number {
   return RANK[a.verdict] - RANK[b.verdict]
-    || b.lowestSocPct - a.lowestSocPct
+    || a.longestDarkH - b.longestDarkH
+    || b.sunPct - a.sunPct
     || a.longestLinkGapH - b.longestLinkGapH
     || b.linkPct - a.linkPct;
 }

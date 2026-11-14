@@ -21,6 +21,7 @@ import { SuggestCard } from "./SuggestCard";
 import { Terrain3D } from "./Terrain3D";
 import { usePublishGuide } from "./Luna";
 import { isInside } from "../lib/heightmap";
+import { bodyStateAt } from "../lib/now";
 
 const MS_PER_H = 3_600_000;
 const shortName = (s: Site): string => s.name.replace(/ \(sample point\)$/, "");
@@ -109,15 +110,19 @@ export function PlanPage({ sites, plan, onPlan, lander, onLander, onFindGood, in
       {slipBlock}
       {!site.terrain && <div className="alert" role="note">No terrain data for this site: times assume a smooth Moon. Near the pole that is wrong by up to 62 pts.</div>}
 
-      <Tiles pp={pp} hours={a.hours} reservePct={lander.spec.minSocPct} slopeDeg={y.site_facts?.slope_deg ?? null} />
+      <Tiles pp={pp} hours={a.hours} slopeDeg={y.site_facts?.slope_deg ?? null}
+        sunNow={bodyStateAt(y.windows.sun, a.start, y.span_stop)} linkNow={bodyStateAt(y.windows.earth, a.start, y.span_stop)} />
       {site.terrain && (
         <Terrain3D siteId={site.id} siteName={shortName(site)} sunAz={dome.series.sun_az[idx]} sunEl={dome.series.sun_el[idx]}
           earthAz={dome.series.earth_az[idx]} earthEl={dome.series.earth_el[idx]} sunUp={isInside(pp.chosen.sun, cursorIso)}
           linkUp={isInside(pp.link, cursorIso)} whenLabel={`Day ${(cursor / 24).toFixed(1)} · ${fmtUtc(cursorIso)}`}
           cursor={cursor} hours={a.hours} onCursor={setCursor} />
       )}
-      <PowerSection pp={pp} lander={lander} onLander={onLander} hours={a.hours} dark={dark} hasMast={!!y.windows.sun_mast10} />
-      <SuggestCard year={y} span={{ start: a.start, stop: a.stop }} lander={lander} onLander={onLander} />
+      <details className="disc power-check">
+        <summary><span><b>Power check (optional)</b> · {answerSentence(pp, lander, days).power}</span></summary>
+        <PowerSection pp={pp} lander={lander} onLander={onLander} hours={a.hours} dark={dark} hasMast={!!y.windows.sun_mast10} />
+        <SuggestCard year={y} span={{ start: a.start, stop: a.stop }} lander={lander} onLander={onLander} />
+      </details>
 
       <div className="two">
         <DataCard link={pp.link} receiveOnly={receiveOnly} missionHours={a.hours} preset={lander.preset} />

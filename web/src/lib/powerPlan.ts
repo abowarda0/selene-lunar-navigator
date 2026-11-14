@@ -57,5 +57,5 @@ export function planPower(year: YearData, span: PlanSpan, lander: LanderPlan): P
   const useMast = lander.mast && !!year.windows.sun_mast10;
   const chosen = panelOption(year, span, lander, useMast, link) as PanelOption;
   const other = panelOption(year, span, lander, !useMast, link);
-  return { chosen, other, link, verdict: planVerdict(chosen.power, lander.spec.minSocPct, link, span.start, span.stop) };
+  return { chosen, other, link, verdict: planVerdict(chosen.power, lander.spec.minSocPct, chosen.sun, link, span.start, span.stop) };
 }

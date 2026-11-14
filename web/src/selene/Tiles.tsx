@@ -5,6 +5,9 @@ import { slopeClass } from "../lib/facts";
 import type { PowerPlan } from "../lib/powerPlan";
 import { Help } from "./Help";
 import { Icon, type IconName } from "./Icon";
+import type { BodyState } from "../lib/now";
+
+const soon = (h: number): string => (h < 1 ? `${Math.max(1, Math.round(h * 60))} min` : plainDuration(h));
 
 interface TileProps {
   readonly icon: IconName;
@@ -35,16 +38,16 @@ const GROUND: Readonly<Record<VerdictLevel, string>> = { good: "Flat enough to l
 interface Props {
   readonly pp: PowerPlan;
   readonly hours: number;
-  readonly reservePct: number;
   readonly slopeDeg: number | null;
+  /** Sun and two-way link at touchdown, with hours to the next change (from the full-year windows). */
+  readonly sunNow: BodyState;
+  readonly linkNow: BodyState;
 }
 
-/** Sunlight, contact with Earth, battery and ground, each as one big number. */
-export function Tiles({ pp, hours, reservePct, slopeDeg }: Props): ReactElement {
+/** Sunlight, contact with Earth, time left at touchdown and ground, each as one big number. */
+export function Tiles({ pp, hours, slopeDeg, sunNow, linkNow }: Props): ReactElement {
   const sunPct = (pp.chosen.sunHours / hours) * 100;
   const c = pp.verdict.comms;
-  const low = pp.chosen.power.lowestSocPct;
-  const batTone = pp.verdict.power.level === "good" ? "bat-ok" : pp.verdict.power.level === "marginal" ? "bat-warn" : "bat-bad";
   const slope = slopeDeg != null && Number.isFinite(slopeDeg) ? slopeClass(slopeDeg) : null;
   return (
     <ul className="tiles" aria-label="Key figures">
@@ -52,12 +55,10 @@ export function Tiles({ pp, hours, reservePct, slopeDeg }: Props): ReactElement 
         help="Share of the mission when part of the Sun is above the real hills around the site. Solar panels only work then." />
       <Tile icon="earth" tone="t-earth" label="Contact with Earth" big={`${Math.round(c.sharePct)}%`} line={`of the time · longest silence ${plainDuration(c.longestGapH)}`}
         help="Earth is reachable when it is above the hills and one of NASA's three big Deep Space Network dishes can see the Moon. In between, the spacecraft cannot talk to anyone." />
-      <Tile icon="battery" tone={batTone} fill={low} label="Battery"
-        big={pp.chosen.power.firstFloor ? "Runs out" : `${Math.round(low)}%`}
-        line={pp.chosen.power.firstFloor
-          ? `hits the ${reservePct}% safety reserve after ${plainDuration(pp.chosen.power.firstFloor.hoursAfter)}`
-          : `lowest charge, never below the ${reservePct}% reserve`}
-        help="How low the battery gets. We keep a safety reserve (20% by default); reaching it means the spacecraft has to shut down, so we call that running out." />
+      <Tile icon="sun" tone="t-sun" label="Time left at touchdown"
+        big={sunNow.hoursToChange == null ? (sunNow.up ? "No sunset" : "No sunrise") : `${sunNow.up ? "Sunset" : "Sunrise"} in ${soon(sunNow.hoursToChange)}`}
+        line={linkNow.hoursToChange == null ? (linkNow.up ? "Earth contact holds through the data" : "No Earth contact in the data") : linkNow.up ? `Earth contact ends in ${soon(linkNow.hoursToChange)}` : `Earth contact starts in ${soon(linkNow.hoursToChange)}`}
+        help="Counted from the landing moment. Sunset means the last of the Sun's disc drops behind the real hills; Earth contact ends when no NASA dish can hold a two-way link." />
       <Tile icon="terrain" tone="t-ground" label="Ground" big={slope ? `${slopeDeg?.toFixed(1)}°` : "–"} line={slope ? GROUND[slope.level] : "Slope not measured here"}
         help="How steep the ground is at the sample point, from NASA's elevation maps. Landers typically accept under 8°. Small rocks are not visible in these maps." />
     </ul>

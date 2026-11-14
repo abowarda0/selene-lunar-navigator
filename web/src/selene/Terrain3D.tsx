@@ -32,8 +32,9 @@ interface Stage {
 }
 
 const KM = 1000;
-const SKY_R = 220;              // km: Sun and Earth markers sit beyond the terrain
-const OVERVIEW = new THREE.Vector3(18, 34, 42);
+const SKY_R = 400;              // km: Sun and Earth markers sit beyond the terrain
+const OVERVIEW = new THREE.Vector3(34, 66, 84);
+const RELIEF = [1, 2, 4] as const;
 const EYE_H = 0.012;            // km: a camera ~12 m above the site (lander deck + panels)
 const STEP_MS = 70;             // playback: one mission hour per frame step
 
@@ -70,13 +71,13 @@ function makeStage(el: HTMLDivElement): Stage {
   const sunLight = new THREE.DirectionalLight(0xfff1dc, 3.2);
   sunLight.castShadow = true;
   sunLight.shadow.mapSize.set(4096, 4096);
-  Object.assign(sunLight.shadow.camera, { left: -44, right: 44, top: 44, bottom: -44, near: 1, far: 260 });
+  Object.assign(sunLight.shadow.camera, { left: -80, right: 80, top: 80, bottom: -80, near: 1, far: 480 });
   sunLight.shadow.bias = -0.0004;
   sunLight.shadow.normalBias = 0.03;
   scene.add(sunLight, sunLight.target);
   const sunSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture("#fff4d6", "rgba(255,190,90,0)"), depthWrite: false }));
-  sunSprite.scale.set(24, 24, 1);
-  const earth = new THREE.Mesh(new THREE.SphereGeometry(3.8, 32, 16), new THREE.MeshBasicMaterial({ color: 0x4da3ff }));
+  sunSprite.scale.set(44, 44, 1);
+  const earth = new THREE.Mesh(new THREE.SphereGeometry(7, 32, 16), new THREE.MeshBasicMaterial({ color: 0x4da3ff }));
   const stars = new THREE.BufferGeometry();
   const pts: number[] = [];
   for (let i = 0; i < 1500; i += 1) {
@@ -85,10 +86,10 @@ function makeStage(el: HTMLDivElement): Stage {
   }
   stars.setAttribute("position", new THREE.Float32BufferAttribute(pts, 3));
   scene.add(sunSprite, earth, new THREE.Points(stars, new THREE.PointsMaterial({ color: 0x8892a6, size: 1.2, sizeAttenuation: false })));
-  const pin = new THREE.Mesh(new THREE.ConeGeometry(0.45, 1.5, 20), new THREE.MeshBasicMaterial({ color: 0xff9f43 }));
+  const pin = new THREE.Mesh(new THREE.ConeGeometry(0.9, 3, 20), new THREE.MeshBasicMaterial({ color: 0xff9f43 }));
   pin.rotation.x = Math.PI;
-  pin.position.y = 1.1;
-  const pinRing = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.2, 40), new THREE.MeshBasicMaterial({ color: 0xff9f43, side: THREE.DoubleSide, transparent: true, opacity: 0.9, depthTest: false }));
+  pin.position.y = 2.2;
+  const pinRing = new THREE.Mesh(new THREE.RingGeometry(1.8, 2.4, 40), new THREE.MeshBasicMaterial({ color: 0xff9f43, side: THREE.DoubleSide, transparent: true, opacity: 0.9, depthTest: false }));
   pinRing.rotation.x = -Math.PI / 2;
   pinRing.position.y = 0.05;
   scene.add(pinRing);
@@ -143,6 +144,7 @@ export function Terrain3D(p: Props): ReactElement {
   const [grid, setGrid] = useState<HeightGrid | null>(null);
   const [view, setView] = useState<View>("overview");
   const [playing, setPlaying] = useState(false);
+  const [relief, setRelief] = useState<(typeof RELIEF)[number]>(2);
 
   useEffect(() => {
     const el = mount.current;
@@ -182,16 +184,19 @@ export function Terrain3D(p: Props): ReactElement {
     if (!s || !grid) return;
     if (s.terrain) { s.scene.remove(s.terrain); s.terrain.geometry.dispose(); }
     s.terrain = terrainMesh(grid);
+    s.terrain.scale.y = relief;
     s.scene.add(s.terrain);
-    s.fly = { from: new THREE.Vector3(0, 140, 140), to: OVERVIEW.clone(), target: new THREE.Vector3(0, 0, 0), t0: performance.now() };
+    s.fly = { from: new THREE.Vector3(0, 260, 260), to: OVERVIEW.clone(), target: new THREE.Vector3(0, 0, 0), t0: performance.now() };
     setView("overview");
-  }, [grid]);
+  }, [grid]);   // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => { if (stage.current?.terrain) stage.current.terrain.scale.y = relief; }, [relief]);
 
   useEffect(() => {
     const s = stage.current;
     if (!s) return;
     const [x, y, z] = sunVector(p.sunAz, p.sunEl);
-    s.sunLight.position.set(x * 120, y * 120, z * 120);
+    s.sunLight.position.set(x * 220, y * 220, z * 220);
     s.sunLight.intensity = p.sunEl > -0.3 ? 3.2 : 0;
     place(s.sunSprite, p.sunAz, Math.max(p.sunEl, -2), SKY_R);
     place(s.earth, p.earthAz, p.earthEl, SKY_R);
@@ -222,6 +227,9 @@ export function Terrain3D(p: Props): ReactElement {
         <div className="t3d-ctl" role="group" aria-label="Camera">
           <button type="button" className={`chip${view === "overview" ? " on" : ""}`} onClick={() => goView("overview")}>Overview</button>
           <button type="button" className={`chip${view === "eye" ? " on" : ""}`} onClick={() => goView("eye")}>Lander's eye (toward the Sun)</button>
+          <span className="t3d-relief" role="group" aria-label="Height scale">
+            {RELIEF.map((r) => <button key={r} type="button" className={`chip${relief === r ? " on" : ""}`} aria-pressed={relief === r} onClick={() => setRelief(r)}>{r === 1 ? "True heights" : `Heights ×${r}`}</button>)}
+          </span>
           <button type="button" className="btn primary" onClick={() => setPlaying((v) => !v)}>{playing ? "Pause" : "Play the mission"}</button>
         </div>
       </div>
@@ -234,7 +242,7 @@ export function Terrain3D(p: Props): ReactElement {
           <span className={`t3d-pill ${p.linkUp ? "earth" : "off"}`}>{p.linkUp ? "Earth link up" : "No link to Earth"}</span>
         </div>
       </div>
-      <p className="src">Terrain: NASA LRO LOLA ({grid?.dem.join(", ") ?? "polar DEMs"}), 80 × 80 km around the site (finest maps near the centre), true height scale (orange marker = landing point). Light comes from the Sun's real direction at this moment, from JPL Horizons; Earth is drawn at its real position, blue when a NASA dish can reach the lander. Mountains farther than 40 km are in the calculation but not drawn, so the labels above, not the shading, are the result.</p>
+      <p className="src">Terrain: NASA LRO LOLA ({grid?.dem.join(", ") ?? "polar DEMs"}), 150 × 150 km around the site (finest maps near the centre) (orange marker = landing point). Heights are shown ×{relief} so the mountains are easy to see; choose True heights for the real shape and shadow lengths. Light comes from the Sun's real direction at this moment, from JPL Horizons; Earth is drawn at its real position, blue when a NASA dish can reach the lander. Mountains farther than 75 km are in the calculation but not drawn, so the labels above, not the shading, are the result.</p>
     </section>
   );
 }
