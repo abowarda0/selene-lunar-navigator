@@ -9,6 +9,7 @@ import { DEFAULT_LANDER } from "../lib/landers";
 import { planPower } from "../lib/powerPlan";
 import { sunHeightAt } from "../lib/sunHeight";
 import { CustomPoint } from "./CustomPoint";
+import { hasServer } from "../api/client";
 import { UtcField } from "./UtcField";
 import { VerdictWord } from "./VerdictWord";
 import { siteShort } from "./CompareTray";
@@ -129,7 +130,7 @@ export function Home({ sites, plan, span, onGo, onCustomSite }: Props): ReactEle
               <button type="submit" className="btn primary wide" disabled={!dateOk && mode !== "site"}>{current.action} <span aria-hidden="true">↗</span></button>
               {span && <p className="src">Data covers {span.start.slice(0, 10)} to {span.stop.slice(0, 10)} (UTC). 12 ready-made sites.</p>}
             </form>
-            <CustomPoint sites={sites} onOpen={(id) => onGo({ site: id, date: d.date, hours: d.hours }, "plan")} onComputed={onCustomSite} />
+            {hasServer && <CustomPoint sites={sites} onOpen={(id) => onGo({ site: id, date: d.date, hours: d.hours }, "plan")} onComputed={onCustomSite} />}
           </div>
           <div className="hero2-right">
             <p className="scene-tag mono">Interactive lunar scene · real NASA relief</p>

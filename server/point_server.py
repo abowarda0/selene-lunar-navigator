@@ -4,6 +4,11 @@
   GET  /api/points/<id>       job status with step, message and, when done, the site record
   GET  /api/points            every finished point (so the app can list them again after a reload)
   GET  /api/points/files/<f>  year_/terrain_/height_<id>.json and terrain_<id>.png for finished points
+  POST /api/assistant         Luna's free-text answers (Gemini; key in GEMINI_API_KEY), same rules as assistant.mjs
+  GET  /healthz               "ok" (for the hosting platform)
+
+The live site (GitHub Pages) calls this server from another origin, so it sends CORS headers for the origins in
+CORS_ORIGINS (comma-separated). HOST/PORT set where it listens (0.0.0.0:7860 in the Docker image).
 
 Jobs run one at a time in a background thread (JPL Horizons asks for polite use); results and downloads are
 cached, so a point is computed once. Standard library only, plus numpy/matplotlib for the pipeline itself.
@@ -24,10 +29,14 @@ import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
+import assistant as A
 import point_builder as P
 
 log = logging.getLogger("points")
 PORT = int(os.environ.get("PORT", "8790"))
+HOST = os.environ.get("HOST", "127.0.0.1")
+CORS_ORIGINS = {o.strip().rstrip("/") for o in os.environ.get(
+    "CORS_ORIGINS", "https://abowarda0.github.io,https://yossefhady.github.io,http://localhost:5180,http://localhost:5173").split(",") if o.strip()}
 OUT = Path(os.environ.get("POINTS_DIR", str(P.ROOT / "server/points"))).resolve()
 MAX_QUEUE = 6
 PER_IP_PER_HOUR = 8
@@ -103,9 +112,25 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt: str, *args) -> None:  # quieter than the default
         log.debug(fmt, *args)
 
+    def cors(self) -> None:
+        origin = (self.headers.get("origin") or "").rstrip("/")
+        if origin and ("*" in CORS_ORIGINS or origin in CORS_ORIGINS):
+            self.send_header("access-control-allow-origin", origin)
+            self.send_header("vary", "origin")
+
+    def do_OPTIONS(self) -> None:  # noqa: N802 - CORS preflight for the JSON POSTs
+        self.send_response(204)
+        self.cors()
+        self.send_header("access-control-allow-methods", "GET, POST, OPTIONS")
+        self.send_header("access-control-allow-headers", "content-type")
+        self.send_header("access-control-max-age", "86400")
+        self.send_header("content-length", "0")
+        self.end_headers()
+
     def send(self, status: int, body: dict) -> None:
         data = json.dumps(body).encode()
         self.send_response(status)
+        self.cors()
         self.send_header("content-type", "application/json")
         self.send_header("cache-control", "no-store")
         self.send_header("x-content-type-options", "nosniff")
@@ -125,6 +150,8 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:  # noqa: N802
         path = self.path.split("?")[0]
+        if path in ("/", "/healthz"):
+            return self.ok({"service": "SELENE custom points + Luna", "ready_points": sum(j["status"] == "done" for j in jobs.values()), "ai": bool(A.key())})
         if path == "/api/points":
             with lock:
                 done = [j["site"] for j in jobs.values() if j["status"] == "done"]
@@ -138,6 +165,7 @@ class Handler(BaseHTTPRequestHandler):
                 return self.fail(404, "not_found", "That point has not been computed.")
             data = f.read_bytes()
             self.send_response(200)
+            self.cors()
             self.send_header("content-type", TYPES[f.suffix])
             self.send_header("cache-control", "public, max-age=3600")
             self.send_header("content-length", str(len(data)))
@@ -151,6 +179,11 @@ class Handler(BaseHTTPRequestHandler):
         return self.fail(404, "not_found", "Not found.")
 
     def do_POST(self) -> None:  # noqa: N802
+        if self.path.split("?")[0] == "/api/assistant":
+            size = int(self.headers.get("content-length") or 0)
+            raw = self.rfile.read(size) if 0 < size <= A.MAX_BODY else b""
+            status, body = A.handle(raw, self.client_ip())
+            return self.send(status, body)
         if self.path.split("?")[0] != "/api/points":
             return self.fail(404, "not_found", "Not found.")
         size = int(self.headers.get("content-length") or 0)
@@ -182,8 +215,9 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s", datefmt="%H:%M:%S")
     load_finished()
     threading.Thread(target=worker, daemon=True).start()
-    srv = ThreadingHTTPServer(("127.0.0.1", PORT), Handler)
-    log.info("SELENE custom points on http://127.0.0.1:%d (%d ready, files in %s)", PORT, sum(j["status"] == "done" for j in jobs.values()), OUT)
+    srv = ThreadingHTTPServer((HOST, PORT), Handler)
+    log.info("SELENE custom points + Luna on http://%s:%d (%d ready, files in %s, AI %s)", HOST, PORT,
+             sum(j["status"] == "done" for j in jobs.values()), OUT, "on" if A.key() else "off")
     srv.serve_forever()
 
 

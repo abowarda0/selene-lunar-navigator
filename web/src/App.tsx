@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type ReactElement } from "react";
-import { api } from "./api/client";
+import { api, hasServer } from "./api/client";
 import type { Site } from "./api/types";
 import { useSites, useYear } from "./hooks";
 import { DEFAULT_LANDER, type LanderPlan } from "./lib/landers";
@@ -45,7 +45,7 @@ export function App(): ReactElement {
   const [customSites, setCustomSites] = useState<readonly Site[]>([]);
   useEffect(() => {
     let live = true;
-    api.points.list().then((r) => { if (live && r.ok) setCustomSites(r.data); });
+    if (hasServer) api.points.list().then((r) => { if (live && r.ok) setCustomSites(r.data); });
     return () => { live = false; };
   }, []);
   const addCustomSite = useCallback((s: Site) => setCustomSites((cur) => (cur.some((x) => x.id === s.id) ? cur : [...cur, s])), []);
