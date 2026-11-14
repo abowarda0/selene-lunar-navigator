@@ -15,6 +15,7 @@ import { domeData, shiftPlan, touchdownOf, type Plan } from "./plan";
 import { PowerSection } from "./PowerSection";
 import { DataCard, GroundCard } from "./SiteCards";
 import { SlipCompare, SlipInput } from "./SlipPanel";
+import { OverlapStart } from "./SlipOverlap";
 import { TechDetails } from "./TechDetails";
 import { Tiles } from "./Tiles";
 import { SuggestCard } from "./SuggestCard";
@@ -124,6 +125,7 @@ export function PlanPage({ sites, plan, onPlan, lander, onLander, onFindGood, in
       <AnswerHero level={pp.verdict.level} answer={answerSentence(pp, lander, days)} context={context}
         inCompare={inCompare} onCompare={onCompare} onFindDates={() => onFindGood(null)} slip={slipControls} shareHash={shareHash} />
       {slipBlock}
+      {slip === 0 && <OverlapStart year={y} plannedStart={plannedStart} onPickDelay={setSlip} />}
       <details className="disc vkey-disc">
         <summary><span>What do Good, Marginal and Poor mean?</span></summary>
         <VerdictKey />

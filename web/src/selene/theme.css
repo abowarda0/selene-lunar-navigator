@@ -265,3 +265,7 @@ a.btn { text-decoration: none; display: inline-flex; align-items: center; gap: 8
 .so-causes { margin: 0; padding-left: 18px; display: grid; gap: 2px; font-size: 13px; }
 .so-causes li.lost b { color: var(--danger); } .so-causes li.gained b { color: var(--success); }
 .slip-head-k { font-weight: 400; color: var(--text-muted); }
+.so-try { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 14px; }
+.so-try > span { flex: 1 1 260px; color: var(--text-secondary); }
+.so-try > span b { color: var(--text-primary); }
+.so-try-btn { min-height: 34px; padding: 0 14px; }
