@@ -1,0 +1,134 @@
+{
+ "ok": true,
+ "data": [
+  {
+   "id": "chandrayaan3",
+   "name": "Chandrayaan-3 (Statio Shiv Shakti)",
+   "lat": -69.373,
+   "lon_e": 32.319,
+   "kind": "landed",
+   "terrain": true,
+   "coord_source": "Wikipedia: Shiv Shakti Point",
+   "verified": true
+  },
+  {
+   "id": "ridge",
+   "name": "Polar ridge top (16.6 km from pole)",
+   "lat": -89.45388,
+   "lon_e": 222.65072,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "NASA AVGVISIB_75S_120M test point",
+   "verified": true
+  },
+  {
+   "id": "polar_mid",
+   "name": "Polar plain (36.4 km from pole)",
+   "lat": -88.79926,
+   "lon_e": 136.33532,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "NASA AVGVISIB_75S_120M test point",
+   "verified": true
+  },
+  {
+   "id": "apollo11",
+   "name": "Apollo 11 (Tranquility Base)",
+   "lat": 0.674,
+   "lon_e": 23.473,
+   "kind": "landed",
+   "terrain": false,
+   "coord_source": "not yet checked against a source",
+   "verified": false
+  },
+  {
+   "id": "malapert_massif",
+   "name": "Malapert Massif (sample point)",
+   "lat": -85.96792,
+   "lon_e": 357.72287,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "Sample point in NASA Artemis III region 'Malapert Massif': best-lit 120 m pixel on NASA's sunlight map within 8 km of LROC NAC mosaic NAC_ROI_MALAPERTLO1_P860S0003. Not NASA's chosen site.",
+   "verified": false,
+   "artemis_region": "Malapert Massif"
+  },
+  {
+   "id": "mons_mouton",
+   "name": "Mons Mouton / Nobile Rim 1 (sample point)",
+   "lat": -85.30405,
+   "lon_e": 37.0581,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "Sample point in NASA Artemis III region 'Mons Mouton / Nobile Rim 1': best-lit 120 m pixel on NASA's sunlight map within 8 km of LROC NAC mosaic NAC_ROI_MTMOUTONLO1_P854S0353. Not NASA's chosen site.",
+   "verified": false,
+   "artemis_region": "Mons Mouton / Nobile Rim 1"
+  },
+  {
+   "id": "mons_mouton_plateau",
+   "name": "Mons Mouton Plateau (sample point)",
+   "lat": -84.27777,
+   "lon_e": 29.90448,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "Sample point in NASA Artemis III region 'Mons Mouton Plateau': best-lit 120 m pixel on NASA's sunlight map within 8 km of LROC NAC mosaic NAC_ROI_MOUTNPLTLO1_P843S0306. Not NASA's chosen site.",
+   "verified": false,
+   "artemis_region": "Mons Mouton Plateau"
+  },
+  {
+   "id": "nobile_rim_2",
+   "name": "Nobile Rim 2 (sample point)",
+   "lat": -83.72496,
+   "lon_e": 59.42007,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "Sample point in NASA Artemis III region 'Nobile Rim 2': best-lit 120 m pixel on NASA's sunlight map within 8 km of LROC NAC mosaic NAC_ROI_NOBILE02LO1_P839S0587. Not NASA's chosen site.",
+   "verified": false,
+   "artemis_region": "Nobile Rim 2"
+  },
+  {
+   "id": "haworth",
+   "name": "Haworth (sample point)",
+   "lat": -86.95319,
+   "lon_e": 335.81466,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "Sample point in NASA Artemis III region 'Haworth': best-lit 120 m pixel on NASA's sunlight map within 8 km of LROC NAC mosaic NAC_ROI_HAWORTH_LO1_P867S3363. Not NASA's chosen site.",
+   "verified": false,
+   "artemis_region": "Haworth"
+  },
+  {
+   "id": "cabeus_b_peak",
+   "name": "Peak near Cabeus B (sample point)",
+   "lat": -83.61575,
+   "lon_e": 291.40941,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "Sample point in NASA Artemis III region 'Peak near Cabeus B': best-lit 120 m pixel on NASA's sunlight map within 8 km of LROC NAC mosaic NAC_ROI_CABEUSPKLO1_P836S2912. Not NASA's chosen site.",
+   "verified": false,
+   "artemis_region": "Peak near Cabeus B"
+  },
+  {
+   "id": "de_gerlache_rim",
+   "name": "de Gerlache Rim 2 (sample point)",
+   "lat": -88.70412,
+   "lon_e": 291.59023,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "Sample point in NASA Artemis III region 'de Gerlache Rim 2': best-lit 120 m pixel on NASA's sunlight map within 8 km of LROC NAC mosaic NAC_ROI_DEGERRIMLO1_P885S2933 (titled 'de Gerlache Rim'). Not NASA's chosen site.",
+   "verified": false,
+   "artemis_region": "de Gerlache Rim 2"
+  },
+  {
+   "id": "slater_plain",
+   "name": "Slater Plain (sample point)",
+   "lat": -88.80753,
+   "lon_e": 123.76917,
+   "kind": "candidate",
+   "terrain": true,
+   "coord_source": "Sample point in NASA Artemis III region 'Slater Plain': best-lit 120 m pixel on NASA's sunlight map within 35 km of Slater (crater, D 25.1 km), USGS Gazetteer: no LROC region mosaic found. Not NASA's chosen site.",
+   "verified": false,
+   "artemis_region": "Slater Plain"
+  }
+ ],
+ "error": null
+}
