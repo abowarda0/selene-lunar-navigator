@@ -36,7 +36,7 @@ a.quiet { color: var(--text-muted); }
 .ans-act .slip { margin-left: auto; }
 
 /* tiles */
-.tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
 .tile { display: grid; gap: 4px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--r); background: var(--card-depth); }
 .tile-top { display: flex; align-items: center; gap: 8px; }
 .tile-ic { display: inline-flex; padding: 6px; border-radius: 50%; }
@@ -86,8 +86,8 @@ a.quiet { color: var(--text-muted); }
 .sw-res { width: 16px; height: 0; border-top: 2px dashed var(--danger); margin-left: 10px; }
 
 /* equal-height cards */
-.two { align-items: stretch; }
-.two > .card { display: flex; flex-direction: column; height: 100%; gap: 8px; }
+.two { align-items: start; }
+.two > .card { display: flex; flex-direction: column; gap: 8px; }
 .two .src { margin-top: auto; }
 .dome-box { aspect-ratio: 1 / 1; max-height: 340px; max-width: 340px; width: 100%; margin: 8px auto 0; }
 .thumb { max-width: 340px; width: 100%; margin: 8px auto 0; }

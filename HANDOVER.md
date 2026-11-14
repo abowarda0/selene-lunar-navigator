@@ -40,6 +40,8 @@ cd spike && python3 -m pytest -q --cov=lunar                          # 85 tests
 **3D needs WebGL.** Use normal Chrome, Edge or Firefox. If WebGL is off, Home falls back to a flat polar map, and the 3D card shows a message instead.
 
 ### Optional: Luna's AI answers (free Gemini)
+Put the key in `server/.env` as `GEMINI_API_KEY=...` (git-ignored), then run `node server/assistant.mjs` from the repo root, next to `npm run dev`.
+
 Luna, the guide character in the bottom-left corner, works without any AI. Her tips come from the page's own numbers. To let her answer free-text questions:
 1. Get a free key at Google AI Studio (aistudio.google.com → "Get API key").
 2. Run `GEMINI_API_KEY=your-key node server/assistant.mjs` (port 8787). The Vite dev server forwards `/api/assistant` to it.
@@ -139,7 +141,7 @@ python3 export_heightmaps.py   # height_*.json for the 3D view (150 km, 401 x 40
 | **Compare** | Up to 3 plans side by side from the "+ Compare" buttons, best value per row marked, and "Choose this plan" |
 | **How it works** | Method, sources, validation, what the colours mean, limits, glossary |
 
-Older docs (`HANDOFF_PROMPT.md`, `FRONTEND_HANDOFF.md`, `APP_SCREENS.md`, `PRODUCT.md`, `DESIGN.md`) describe earlier stages and are partly out of date. Trust this file and `ACHIEVEMENTS.md`.
+Older docs (`HANDOFF_PROMPT.md`, `FRONTEND_HANDOFF.md`, `APP_SCREENS.md`, `PRODUCT.md`, `DESIGN.md`) now live in `docs/archive/`. They describe earlier stages and are partly out of date. Trust this file and `ACHIEVEMENTS.md`.
 
 ---
 
@@ -176,6 +178,21 @@ These came out of reviews with the owner. Keep them unless you agree a change wi
 - **A brand-new location** would need the backend from section 8, item 4: about 1.5–2 min the first time, instant after caching.
 
 ---
+
+## 9b. Final touches (14 Nov 2026, branch `final-touches`)
+Review fixes before submission. All web tests, the typecheck and the build pass.
+- **Demo default is now a Good plan with a slip story:** Mons Mouton Plateau, landing 17 Dec 2026 00:00 UTC, 14 days (`selene/plan.ts`). `+24 h` turns it Poor ("it now runs into 13.9 h of darkness"). The old 30-day default made every site Poor, because 30 days is longer than one lunar daylight (about 14.8 days). The 30-day option is now labelled "(meets night)".
+- **Answer on the first screen:** Home shows the verdict, the reason, sunlight, Earth link and Sun height for the current setup before any click. The hero is smaller on short screens so the setup card and button fit at 1366×768. Luna moved bottom-right.
+- **Solar elevation angle up front:** a new **Sun height** tile (elevation at touchdown, clearance over the hills, highest in the mission) and the Sun height in the 3D label (`lib/sunHeight.ts`, from the 30-min track and the LOLA skyline).
+- **Earth visibility windows:** a thin **Earth in view** row on the timeline and an "Earth in view %" in the Contact tile, as plain line of sight next to the DSN link (`lib/earthView.ts`). Built from the year file's Earth track and skyline; edges ±15 min. Tested: at least 97% of the backend's DSN link time falls inside it at three sites. The verdict still uses the DSN link.
+- **Launch-slip headline:** one line names what a slip does and why (`lib/slip.ts` `slipHeadline`); the slip table now shows the verdict's own figures (sunlight, longest dark, Earth link, longest silence) instead of battery.
+- **ISO 24-hour UTC everywhere:** the browser date/time pickers (which showed "03/16/2027", "12:00 AM") are replaced by one text field, `YYYY-MM-DD HH:MM UTC` (`selene/UtcField.tsx`).
+- **Stale wording fixed:** How it works (verdict no longer "power and link"), the Real NASA data tooltip (10-min positions, checked every minute), Luna's tips, `rank.ts` comment.
+- **Phone:** no page scrolls sideways at 390 px (`.stack` grid column fix); "Talking to Earth" no longer stretches into empty space; the 3D view opens on the first sunlit moment instead of a black scene.
+- **Size:** removed the unused `scenario_*.json`, `sweep_*.json` and stale `year_nobile_rim.json` (data 98 MB → 22 MB). Note: `spike/build_dataset.py` still writes those files; delete them again after a rebuild. three.js now loads only with a 3D view (first JS load 748 KB → 258 KB).
+- **Luna AI:** key read from `server/.env` (git-ignored); default model `gemini-3.5-flash-lite` (about 2 s; `gemini-2.0-flash` is retired and the larger Flash models are too slow); rate-limit table no longer grows forever; `TRUST_PROXY=1` for hosting behind a proxy.
+- Older docs moved to `docs/archive/`.
+- **Calendar picker:** the date fields have a calendar button; the field still shows ISO `YYYY-MM-DD`. An empty or invalid date hides the Home answer and disables Run analysis.
 
 ## 10. Data sources (cite these)
 - JPL Horizons API (DE441), ssd.jpl.nasa.gov.

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { fmtUtc } from "../lib/format";
 import type { PlanMetrics } from "../lib/rank";
-import { slipLabel, slipSentence } from "../lib/slip";
+import { slipHeadline, slipLabel } from "../lib/slip";
 import { VerdictWord } from "./VerdictWord";
 
 const QUICK_SLIPS: readonly number[] = [6, 24, 168];
@@ -20,6 +20,7 @@ export function SlipInput({ slip, onSlip }: { readonly slip: number; readonly on
 }
 
 const pct = (v: number): string => `${Math.round(v)}%`;
+const h1 = (v: number): string => v.toFixed(1);
 
 function Row({ label, m, start }: { readonly label: string; readonly m: PlanMetrics | null; readonly start: string }): ReactElement {
   return (
@@ -29,11 +30,12 @@ function Row({ label, m, start }: { readonly label: string; readonly m: PlanMetr
       {m ? (
         <>
           <td><VerdictWord level={m.verdict} /></td>
-          <td className="num">{pct(m.lowestSocPct)}</td>
+          <td className="num">{pct(m.sunPct)}</td>
+          <td className="num">{h1(m.longestDarkH)}</td>
           <td className="num">{pct(m.linkPct)}</td>
           <td className="num">{Math.round(m.longestLinkGapH)}</td>
         </>
-      ) : <td colSpan={4} className="muted">Outside the stored data</td>}
+      ) : <td colSpan={5} className="muted">Outside the stored data</td>}
     </tr>
   );
 }
@@ -52,14 +54,17 @@ interface Props {
 export function SlipCompare({ slip, planned, slipped, plannedStart, slippedStart, onAdopt, onFindGood }: Props): ReactElement {
   return (
     <div className="slip-compare">
+      {planned && slipped && <p className={`slip-head ${slipped.verdict}`} role="status">{slipHeadline(slip, planned, slipped)}</p>}
+      <div className="tbl-wrap">
       <table className="tbl">
-        <thead><tr><th /><th>Landing (UTC)</th><th>Verdict</th><th className="num">Lowest battery</th><th className="num">Contact with Earth</th><th className="num">Longest silence (h)</th></tr></thead>
+        <thead><tr><th /><th>Landing (UTC)</th><th>Verdict</th><th className="num">Sunlight</th><th className="num">Longest dark (h)</th><th className="num">Earth link</th><th className="num">Longest silence (h)</th></tr></thead>
         <tbody>
           <Row label="Planned" m={planned} start={plannedStart} />
           <Row label={`Late by ${slipLabel(slip)}`} m={slipped} start={slippedStart} />
         </tbody>
       </table>
-      {planned && slipped && <p className="slip-say">{slipSentence(slip, planned.verdict, slipped.verdict)}</p>}
+      </div>
+      <p className="src">Same mission length, same site; only the landing moves. Thin rows on the timeline below show the plan as first planned.</p>
       <div className="actions">
         {slipped && <button type="button" className="btn" onClick={onAdopt}>Use the late date</button>}
         <button type="button" className="btn" onClick={onFindGood}>Find the next Good date at this site</button>

@@ -1,6 +1,6 @@
 /**
- * Ranking plans by date or by site. Sort key: verdict (Good > Marginal > Poor), then lowest
- * battery (higher first), then longest link gap (shorter first), then link share (larger first).
+ * Ranking plans by date or by site. Sort key (SORT_RULE): verdict (Good > Marginal > Poor), then the
+ * shortest dark spell, then the most sunlight, then the shortest silence from Earth, then the most contact.
  */
 import type { Site, VerdictLevel, YearData } from "../api/types";
 import { clip } from "./analysis";

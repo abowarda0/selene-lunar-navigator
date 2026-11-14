@@ -1,6 +1,6 @@
 # What we have achieved: Lunar Landing Site Navigator
 
-State checked on **Sat 14 Nov 2026, 00:45 Cairo time**. Every number here was re-read from the files or re-run tonight. This file covers the engine, the data and the proof. The screens are in `APP_SCREENS.md`.
+State checked on **Sat 14 Nov 2026, 00:45 Cairo time**. Every number here was re-read from the files or re-run tonight. This file covers the engine, the data and the proof. The screens are in `docs/archive/APP_SCREENS.md` (older; see `HANDOVER.md` for the current pages).
 
 ---
 
@@ -85,7 +85,7 @@ API contract: `contract/CONTRACT.md` v1 (`/api/sites`, `/api/scenario`) plus a p
 ---
 
 ## 6. Frontend (for completeness)
-`web/`: React + Vite + TypeScript, **48 vitest tests pass**. It reads the static files above. Screen plan: `APP_SCREENS.md`.
+`web/`: React + Vite + TypeScript, **48 vitest tests pass**. It reads the static files above. Screen plan: `docs/archive/APP_SCREENS.md` (older).
 
 ---
 

@@ -2,7 +2,8 @@ import type { ReactElement } from "react";
 import type { Site } from "../api/types";
 import { fmtDate } from "../lib/format";
 import { LANDER_PRESETS, PRESET_ORDER, type LanderPlan, type PresetId } from "../lib/landers";
-import { DURATION_DAYS, type Plan } from "./plan";
+import { DURATION_DAYS, durationLabel, type Plan } from "./plan";
+import { UtcField } from "./UtcField";
 
 interface Props {
   readonly sites: readonly Site[];
@@ -27,16 +28,13 @@ export function PlanBar({ sites, plan, onPlan, lander, onLander, span }: Props):
         </select>
       </div>
       <div className="pb-field">
-        <label htmlFor="pb-date">Landing date and time (UTC)</label>
-        <span className="pb-pair">
-          <input id="pb-date" type="date" value={plan.date} min={span?.start.slice(0, 10)} max={span?.stop.slice(0, 10)} onChange={(e) => e.target.value && onPlan({ date: e.target.value })} />
-          <input aria-label="Landing time (UTC)" type="time" step={60} value={plan.time} onChange={(e) => e.target.value && onPlan({ time: e.target.value })} />
-        </span>
+        <UtcField label="Landing (UTC, 24-hour)" date={plan.date} time={plan.time} min={span?.start.slice(0, 10)} max={span?.stop.slice(0, 10)}
+          onCommit={(date, time) => onPlan({ date, time })} />
       </div>
       <div className="pb-field">
         <label htmlFor="pb-dur">Mission length</label>
         <select id="pb-dur" value={plan.hours} onChange={(e) => onPlan({ hours: Number(e.target.value) })}>
-          {DURATION_DAYS.map((d) => <option key={d} value={d * 24}>{d} days</option>)}
+          {DURATION_DAYS.map((d) => <option key={d} value={d * 24}>{durationLabel(d)}</option>)}
         </select>
       </div>
       <div className="pb-field">

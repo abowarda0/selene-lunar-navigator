@@ -2,12 +2,23 @@
 // The key lives only here, in the GEMINI_API_KEY environment variable; the website never sees it.
 // Run:  GEMINI_API_KEY=... node server/assistant.mjs      (optional: GEMINI_MODEL, PORT, STATIC_DIR)
 import http from "node:http";
+import { existsSync, readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+// Optional server/.env (git-ignored) so the key need not be typed on every start. Real env vars win.
+const ENV_FILE = path.join(path.dirname(fileURLToPath(import.meta.url)), ".env");
+if (existsSync(ENV_FILE)) {
+  for (const line of readFileSync(ENV_FILE, "utf8").split(/\r?\n/)) {
+    const m = /^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*?)\s*$/.exec(line);
+    if (m && process.env[m[1]] === undefined) process.env[m[1]] = m[2].replace(/^(["'])(.*)\1$/, "$2");
+  }
+}
 
 const PORT = Number(process.env.PORT ?? 8787);
 const KEY = process.env.GEMINI_API_KEY ?? "";
-const MODEL = process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
+const MODEL = process.env.GEMINI_MODEL ?? "gemini-3.5-flash-lite";
 const STATIC_DIR = process.env.STATIC_DIR ? path.resolve(process.env.STATIC_DIR) : null;
 const MAX_QUESTION = 400;
 const MAX_BODY = 8_000;
@@ -33,6 +44,15 @@ function limited(ip) {
   hits.set(ip, [...recent, now]);
   return recent.length >= RATE.perMinute;
 }
+// Forget visitors idle for a minute, so the rate-limit table cannot grow without bound.
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, ts] of hits) if (!ts.some((t) => now - t < 60_000)) hits.delete(ip);
+}, 60_000).unref();
+
+/** Visitor address; behind a hosting proxy (TRUST_PROXY=1) use the first X-Forwarded-For hop. */
+const clientIp = (req) =>
+  (process.env.TRUST_PROXY === "1" && String(req.headers["x-forwarded-for"] ?? "").split(",")[0].trim()) || req.socket.remoteAddress || "?";
 
 async function readBody(req) {
   let size = 0;
@@ -80,7 +100,7 @@ async function serveStatic(req, res) {
 
 http.createServer(async (req, res) => {
   if (req.url === "/api/assistant" && req.method === "POST") {
-    const ip = req.socket.remoteAddress ?? "?";
+    const ip = clientIp(req);
     if (limited(ip)) return fail(res, 429, "rate_limited", "Too many questions, wait a minute.");
     let body;
     try { body = await readBody(req); } catch { return fail(res, 400, "bad_request", "Send a small JSON body."); }

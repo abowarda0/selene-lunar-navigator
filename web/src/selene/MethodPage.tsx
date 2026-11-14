@@ -30,7 +30,7 @@ export function MethodPage(): ReactElement {
         <section className="s-card">
           <div className="s-card-head"><h2>What is computed</h2></div>
           <p>For each site we know the position of the Sun and of Earth in its sky every minute, and the height of the real skyline in every direction. The Sun counts as visible when any part of its disc is above the skyline (as in NASA's illumination maps). Earth counts as reachable when one of NASA's three 70 m Deep Space Network dishes is above the skyline and the Moon is at least 10° up in that dish's sky (two-way link).</p>
-          <p>For a touchdown time the visible periods are cut to the plan duration. An energy model runs the lander's battery through those periods; the verdict is the worse of the power and link results.</p>
+          <p>For a touchdown time the visible periods are cut to the plan duration. The verdict is the worse of two checks: does the mission fit inside the sunlight, and can a NASA dish hold a two-way link often enough. The battery model is a separate, optional check and does not set the verdict.</p>
         </section>
         <section className="s-card">
           <div className="s-card-head"><h2>Sources</h2></div>
