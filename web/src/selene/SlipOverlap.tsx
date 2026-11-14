@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactElement } from "react";
 import type { YearData } from "../api/types";
 import { useWidth } from "../hooks";
-import { compareSlip, FIRST_HOURS, overlapHeadline, overlapWhy, spanHours, type Cause, type EarthMode, type Overlap72, type Span } from "../lib/overlap72";
+import { compareSlip, FIRST_HOURS, overlapFirst, overlapHeadline, overlapWhy, spanHours, type Cause, type EarthMode, type Overlap72, type Span } from "../lib/overlap72";
 
 interface Props {
   readonly year: YearData;
@@ -138,6 +138,72 @@ export function SlipOverlap({ year, plannedStart, lateStart, delayLabel }: Props
         </ul>
       )}
       {mode === "view" && !year.windows.earth_view && <p className="src">Earth in view is read from the 30-minute sky track and the LOLA skyline (edges ±15 min); the DSN link is minute-accurate.</p>}
+    </section>
+  );
+}
+
+const QUICK: readonly { h: number; label: string }[] = [{ h: 6, label: "+6 h" }, { h: 24, label: "+24 h" }, { h: 168, label: "+7 d" }];
+
+/**
+ * Before any delay is picked: the plan's own Sun + Earth overlap in the first 72 h, always visible on Plan,
+ * with buttons that start the planned-vs-late comparison above. So the promise is on screen without a click.
+ */
+export function OverlapStart({ year, plannedStart, onPickDelay }: { readonly year: YearData; readonly plannedStart: string; readonly onPickDelay: (hours: number) => void }): ReactElement | null {
+  const [mode, setMode] = useState<EarthMode>("view");
+  const [box, W] = useWidth<HTMLDivElement>(720);
+  const sc = scaleFor(W);
+  const o = useMemo(() => overlapFirst(year, plannedStart, mode), [year, plannedStart, mode]);
+  const other = useMemo(() => overlapFirst(year, plannedStart, mode === "view" ? "link" : "view"), [year, plannedStart, mode]);
+  if (!o) return null;
+  const a = spanHours(o.both);
+  const ticks = sc.plot < 420 ? [0, 24, 48, 72] : [0, 12, 24, 36, 48, 60, 72];
+  const H = ROW_H + 26;
+  return (
+    <section className="so so-start" aria-labelledby="so-start-h">
+      <div className="so-head">
+        <h3 id="so-start-h" className="so-title">First {FIRST_HOURS} hours after touchdown</h3>
+        <div className="seg so-seg" role="radiogroup" aria-label="What counts as Earth">
+          <span className="so-seg-l">Earth =</span>
+          {(["view", "link"] as const).map((m) => (
+            <button key={m} type="button" role="radio" aria-checked={mode === m} className={mode === m ? "on" : ""} onClick={() => setMode(m)}>
+              {m === "view" ? "Line of sight" : "DSN link"}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p className="so-headline">{h1(a)} h of power + comms overlap ({mode === "view" ? "Sun and Earth both in view" : "Sun and a DSN link together"}) in the first {FIRST_HOURS} h.</p>
+      <dl className="so-figs">
+        <div><dt>This plan</dt><dd className="mono">{h1(a)} h</dd></div>
+        {other && <div className="so-other"><dt>With {mode === "view" ? "DSN two-way link" : "Earth in view"}</dt><dd className="mono">{h1(spanHours(other.both))} h</dd></div>}
+      </dl>
+      <div ref={box} className="so-box">
+        <svg className="so-svg" width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Overlap in the first ${FIRST_HOURS} hours: ${h1(a)} hours`}>
+          <defs>
+            <pattern id="so-both-start" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="4" height="8" fill="var(--accent-warm)" /><rect x="4" width="4" height="8" fill="var(--accent-primary)" />
+            </pattern>
+          </defs>
+          {ticks.map((t) => (
+            <g key={t}>
+              <line x1={sc.x(t)} x2={sc.x(t)} y1={0} y2={H - 18} className="so-grid" />
+              <text x={sc.x(t)} y={H - 4} textAnchor={t === 0 ? "start" : t === FIRST_HOURS ? "end" : "middle"} className="so-tick">+{t} h</text>
+            </g>
+          ))}
+          <g>
+            <text x={PAD_L - 8} y={18} textAnchor="end" className="so-lab">This plan</text>
+            <rect x={PAD_L} y={6} width={sc.plot} height={BAR_H} className="so-track" />
+            {o.both.map((s) => <rect key={`b${s[0]}`} x={sc.x(s[0])} y={6} width={sc.wd(s)} height={BAR_H} fill="url(#so-both-start)" />)}
+            <rect x={PAD_L} y={6 + BAR_H + 2} width={sc.plot} height={STRIP_H} className="so-track" />
+            {o.sun.map((s) => <rect key={`s${s[0]}`} x={sc.x(s[0])} y={6 + BAR_H + 2} width={sc.wd(s)} height={STRIP_H} fill="var(--accent-warm)" />)}
+            <rect x={PAD_L} y={6 + BAR_H + STRIP_H + 4} width={sc.plot} height={STRIP_H} className="so-track" />
+            {o.earth.map((s) => <rect key={`e${s[0]}`} x={sc.x(s[0])} y={6 + BAR_H + STRIP_H + 4} width={sc.wd(s)} height={STRIP_H} fill="var(--accent-primary)" />)}
+          </g>
+        </svg>
+      </div>
+      <div className="so-try">
+        <span><b>What if launch is late?</b> See how many overlap hours a delay gains or loses, and why:</span>
+        {QUICK.map((q) => <button key={q.h} type="button" className="btn primary so-try-btn" onClick={() => onPickDelay(q.h)}>{q.label}</button>)}
+      </div>
     </section>
   );
 }
