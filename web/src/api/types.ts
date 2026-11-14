@@ -15,6 +15,20 @@ export interface Site {
   readonly verified: boolean;
   /** NASA Artemis III candidate region this sample point stands for. */
   readonly artemis_region?: string;
+  /** A point a user typed in, computed on demand by server/point_server.py. */
+  readonly custom?: boolean;
+}
+
+/** A custom-point job on the point server. */
+export interface PointJob {
+  readonly id: string;
+  readonly status: "queued" | "running" | "done" | "error";
+  readonly step: number;
+  readonly steps: number;
+  readonly message: string;
+  /** Jobs ahead of this one while queued. */
+  readonly ahead?: number;
+  readonly site?: Site;
 }
 
 export interface VisWindow {
@@ -156,6 +170,8 @@ export interface YearData {
     readonly receive_only?: readonly VisWindow[];
     /** v1.3: Sun for panels on a 10 m mast; terrain sites only. */
     readonly sun_mast10?: readonly VisWindow[];
+    /** Custom points: any part of Earth above the skyline (line of sight), minute-accurate from the pipeline. */
+    readonly earth_view?: readonly VisWindow[];
   };
   readonly site_facts?: SiteFacts;
   readonly track: {

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactElement } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { decodeHeights, sunVector, type HeightGrid } from "../lib/heightmap";
+import { api } from "../api/client";
 
 interface Props {
   readonly siteId: string;
@@ -172,7 +173,7 @@ export function Terrain3D(p: Props): ReactElement {
   useEffect(() => {
     let live = true;
     setGrid(null);
-    fetch(`${import.meta.env.BASE_URL ?? "./"}data/height_${p.siteId}.json`)
+    fetch(api.assetUrl(`height_${p.siteId}.json`))
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((j: { data: HeightGrid }) => { if (live) setGrid(j.data); })
       .catch(() => { if (live) setFailed("No 3D terrain for this site (it has no LOLA polar terrain data)."); });

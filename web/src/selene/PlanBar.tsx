@@ -44,7 +44,7 @@ export function PlanBar({ sites, plan, onPlan, lander, onLander, span }: Props):
         </select>
       </div>
       <p className="pb-note">
-        {sites.length} ready-made sites.{span && <> Dates from {fmtDate(span.start)} to {fmtDate(span.stop)} (UTC).</>}
+        {sites.filter((s) => !s.custom).length} ready-made sites{sites.some((s) => s.custom) ? ` + ${sites.filter((s) => s.custom).length} of your points` : ""}.{span && <> Dates from {fmtDate(span.start)} to {fmtDate(span.stop)} (UTC).</>}
       </p>
     </form>
   );

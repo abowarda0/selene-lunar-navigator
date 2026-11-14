@@ -24,6 +24,7 @@ function tags(s: Site): string[] {
   return [
     ...(s.kind === "landed" ? ["reference"] : []),
     ...(TEST_POINTS.has(s.id) ? ["test point"] : []),
+    ...(s.custom ? ["your point"] : []),
     ...(!s.terrain ? ["no terrain, smooth Moon"] : []),
   ];
 }
