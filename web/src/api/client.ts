@@ -1,4 +1,4 @@
-import type { ApiError, Envelope, ScenarioData, ScenarioQuery, Site, Sweep, TerrainMap, YearData } from "./types";
+import type { ApiError, Envelope, PointJob, ScenarioData, ScenarioQuery, Site, Sweep, TerrainMap, YearData } from "./types";
 import { fmtDate } from "../lib/format";
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -20,6 +20,8 @@ export interface ClientOptions {
   /** Folder of contract-shaped JSON files used until the backend is deployed. */
   readonly dataBase?: string;
   readonly fetchImpl?: typeof fetch;
+  /** Custom-point service (server/point_server.py); default "api/points" on the same origin. */
+  readonly pointsBase?: string;
 }
 
 export interface Client {
@@ -36,7 +38,17 @@ export interface Client {
   year(site: string): Promise<Envelope<YearData>>;
   /** URL of a file the API names, such as a terrain image. */
   assetUrl(name: string): string;
+  /** Custom points computed on demand by server/point_server.py. */
+  readonly points: {
+    list(): Promise<Envelope<readonly Site[]>>;
+    create(lat: number, lonE: number): Promise<Envelope<PointJob>>;
+    status(id: string): Promise<Envelope<PointJob>>;
+  };
 }
+
+/** Files of custom points (ids like pt_s85300_e031200) live on the point server, not in the static data. */
+export const CUSTOM_FILE_RE = /_pt_[ns]\d{5}_e\d{6}\./;
+export const isCustomSite = (id: string): boolean => /^pt_[ns]\d{5}_e\d{6}$/.test(id);
 
 const fail = (code: string, message: string): Envelope<never> => ({ ok: false, data: null, error: { code, message } });
 
@@ -60,12 +72,15 @@ function validate(q: ScenarioQuery): Envelope<never> | null {
 export function createClient(opts: ClientOptions = {}): Client {
   const doFetch = opts.fetchImpl ?? fetch.bind(globalThis);
   const dataBase = opts.dataBase ?? "data/";
+  const pointsBase = opts.pointsBase ?? "api/points";
+  /** Static data file, or the point server for a custom point's files. */
+  const fileUrl = (name: string): string => (CUSTOM_FILE_RE.test(name) ? `${pointsBase}/files/${name}` : `${dataBase}${name}`);
   let sitesCache: Promise<Envelope<readonly Site[]>> | null = null;
 
-  async function getJson<T>(url: string): Promise<Envelope<T>> {
+  async function getJson<T>(url: string, init?: RequestInit): Promise<Envelope<T>> {
     let res: Response;
     try {
-      res = await doFetch(url);
+      res = await doFetch(url, init);
     } catch {
       return fail("network", "Could not reach the server. Check the connection and try again.");
     }
@@ -106,20 +121,28 @@ export function createClient(opts: ClientOptions = {}): Client {
   const sweep = (site: string): Promise<Envelope<Sweep>> =>
     getJson<Sweep>(opts.apiBase ? `${opts.apiBase}/api/sweep?${new URLSearchParams({ site, days: String(MOCK_DAYS) }).toString()}` : `${dataBase}sweep_${site}.json`);
   const terrain = (site: string): Promise<Envelope<TerrainMap>> =>
-    getJson<TerrainMap>(opts.apiBase ? `${opts.apiBase}/api/terrain?${new URLSearchParams({ site }).toString()}` : `${dataBase}terrain_${site}.json`);
+    getJson<TerrainMap>(opts.apiBase && !isCustomSite(site) ? `${opts.apiBase}/api/terrain?${new URLSearchParams({ site }).toString()}` : fileUrl(`terrain_${site}.json`));
   const yearCache = new Map<string, Promise<Envelope<YearData>>>();
   const year = (site: string): Promise<Envelope<YearData>> => {
     const hit = yearCache.get(site);
     if (hit) return hit;
-    const p = getJson<YearData>(opts.apiBase ? `${opts.apiBase}/api/year?${new URLSearchParams({ site }).toString()}` : `${dataBase}year_${site}.json`);
+    const p = getJson<YearData>(opts.apiBase && !isCustomSite(site) ? `${opts.apiBase}/api/year?${new URLSearchParams({ site }).toString()}` : fileUrl(`year_${site}.json`));
     yearCache.set(site, p);
     p.then((r) => { if (!r.ok) yearCache.delete(site); });
     return p;
   };
-  const assetUrl = (name: string): string => (opts.apiBase ? `${opts.apiBase}/api/files/${encodeURIComponent(name)}` : `${dataBase}${name}`);
+  const assetUrl = (name: string): string => (opts.apiBase && !CUSTOM_FILE_RE.test(name) ? `${opts.apiBase}/api/files/${encodeURIComponent(name)}` : fileUrl(name));
 
-  return { suggestedDates: opts.apiBase ? [] : MOCK_DATES, days: MOCK_DAYS, sites, scenario, sweep, terrain, year, assetUrl };
+  const points = {
+    list: () => getJson<readonly Site[]>(pointsBase),
+    create: (lat: number, lonE: number) => getJson<PointJob>(pointsBase, {
+      method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ lat, lon_e: lonE }),
+    }),
+    status: (id: string) => getJson<PointJob>(`${pointsBase}/${encodeURIComponent(id)}`),
+  };
+
+  return { suggestedDates: opts.apiBase ? [] : MOCK_DATES, days: MOCK_DAYS, sites, scenario, sweep, terrain, year, assetUrl, points };
 }
 
 const env = import.meta.env as Record<string, string | undefined>;
-export const api = createClient({ apiBase: env.VITE_API_BASE || undefined, dataBase: `${env.BASE_URL ?? "./"}data/` });
+export const api = createClient({ apiBase: env.VITE_API_BASE || undefined, dataBase: `${env.BASE_URL ?? "./"}data/`, pointsBase: env.VITE_POINTS_BASE || undefined });

@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState, type ReactElement } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactElement } from "react";
+import { api } from "./api/client";
+import type { Site } from "./api/types";
 import { useSites, useYear } from "./hooks";
 import { DEFAULT_LANDER, type LanderPlan } from "./lib/landers";
 import { decodePlanLink, encodePlanLink } from "./lib/shareLink";
@@ -39,6 +41,14 @@ export function App(): ReactElement {
   const sites = useSites();
   const year = useYear(plan.site);
   const compare = useCompare();
+  // Custom points computed by the point server, listed after the 12 ready-made sites. Missing server = none.
+  const [customSites, setCustomSites] = useState<readonly Site[]>([]);
+  useEffect(() => {
+    let live = true;
+    api.points.list().then((r) => { if (live && r.ok) setCustomSites(r.data); });
+    return () => { live = false; };
+  }, []);
+  const addCustomSite = useCallback((s: Site) => setCustomSites((cur) => (cur.some((x) => x.id === s.id) ? cur : [...cur, s])), []);
 
   useEffect(() => {
     const onHash = () => {
@@ -57,7 +67,8 @@ export function App(): ReactElement {
   const go = useCallback((v: View) => { window.location.hash = v; }, []);
   const onPlan = useCallback((p: Partial<Plan>) => setPlan((cur) => ({ ...cur, ...p })), []);
   const onLander = useCallback((l: Partial<LanderPlan>) => setLander((cur) => ({ ...cur, ...l })), []);
-  const list = sites.data ?? [];
+  const baseList = sites.data;
+  const list = useMemo(() => [...(baseList ?? []), ...customSites.filter((c) => !(baseList ?? []).some((s) => s.id === c.id))], [baseList, customSites]);
   const site = list.find((s) => s.id === plan.site);
   const span = year.data ? { start: year.data.span_start, stop: year.data.span_stop } : null;
   const ready = list.length > 0;
@@ -95,7 +106,7 @@ export function App(): ReactElement {
         {sites.error && <div className="alert" role="alert">The site list did not load: {sites.error.message}</div>}
         {!ready && !sites.error && <p className="muted" role="status">Loading the landing sites…</p>}
         {view === "home" && ready && (
-          <Home sites={list} plan={plan} span={span}
+          <Home sites={list} plan={plan} span={span} onCustomSite={addCustomSite}
             onGo={(p, to) => { onPlan(p); setDatesAfter(null); go(to); }} />
         )}
         {view === "plan" && ready && (

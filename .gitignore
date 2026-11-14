@@ -29,3 +29,6 @@ LUNA-OPS-fixed.html
 # Secrets
 .env
 .env.*
+
+# Custom points computed on demand by server/point_server.py
+server/points/

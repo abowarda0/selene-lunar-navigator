@@ -1,4 +1,6 @@
 import type { ReactElement } from "react";
+import type { YearData } from "../api/types";
+import { SlipOverlap } from "./SlipOverlap";
 import { fmtUtc } from "../lib/format";
 import type { PlanMetrics } from "../lib/rank";
 import { slipHeadline, slipLabel } from "../lib/slip";
@@ -46,15 +48,18 @@ interface Props {
   readonly slipped: PlanMetrics | null;
   readonly plannedStart: string;
   readonly slippedStart: string;
+  /** Year file of the site, for the 72-hour overlap comparison. */
+  readonly year: YearData;
   readonly onAdopt: () => void;
   readonly onFindGood: () => void;
 }
 
 /** Planned against slipped, one sentence on what changed, and what to do about it. */
-export function SlipCompare({ slip, planned, slipped, plannedStart, slippedStart, onAdopt, onFindGood }: Props): ReactElement {
+export function SlipCompare({ slip, planned, slipped, plannedStart, slippedStart, year, onAdopt, onFindGood }: Props): ReactElement {
   return (
     <div className="slip-compare">
-      {planned && slipped && <p className={`slip-head ${slipped.verdict}`} role="status">{slipHeadline(slip, planned, slipped)}</p>}
+      <SlipOverlap year={year} plannedStart={plannedStart} lateStart={slippedStart} delayLabel={slipLabel(slip)} />
+      {planned && slipped && <p className={`slip-head ${slipped.verdict}`} role="status"><span className="slip-head-k">Whole mission: </span>{slipHeadline(slip, planned, slipped)}</p>}
       <div className="tbl-wrap">
       <table className="tbl">
         <thead><tr><th /><th>Landing (UTC)</th><th>Verdict</th><th className="num">Sunlight</th><th className="num">Longest dark (h)</th><th className="num">Earth link</th><th className="num">Longest silence (h)</th></tr></thead>

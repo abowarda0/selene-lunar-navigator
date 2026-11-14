@@ -8,6 +8,7 @@ import { latText } from "../lib/format";
 import { DEFAULT_LANDER } from "../lib/landers";
 import { planPower } from "../lib/powerPlan";
 import { sunHeightAt } from "../lib/sunHeight";
+import { CustomPoint } from "./CustomPoint";
 import { UtcField } from "./UtcField";
 import { VerdictWord } from "./VerdictWord";
 import { siteShort } from "./CompareTray";
@@ -29,6 +30,8 @@ interface Props {
   readonly plan: Plan;
   readonly span: { readonly start: string; readonly stop: string } | null;
   readonly onGo: (p: Partial<Plan>, to: Target) => void;
+  /** A custom point finished computing on the point server. */
+  readonly onCustomSite: (site: Site) => void;
 }
 
 interface Draft {
@@ -38,7 +41,7 @@ interface Draft {
 }
 
 /** "What do you already know?": three ways in, the spacecraft, and the south pole at a glance. */
-export function Home({ sites, plan, span, onGo }: Props): ReactElement {
+export function Home({ sites, plan, span, onGo, onCustomSite }: Props): ReactElement {
   const [d, setD] = useState<Draft>({ site: plan.site, date: plan.date, hours: plan.hours });
   const [hover, setHover] = useState<string | null>(null);
   const [globeFailed, setGlobeFailed] = useState(false);
@@ -126,6 +129,7 @@ export function Home({ sites, plan, span, onGo }: Props): ReactElement {
               <button type="submit" className="btn primary wide" disabled={!dateOk && mode !== "site"}>{current.action} <span aria-hidden="true">↗</span></button>
               {span && <p className="src">Data covers {span.start.slice(0, 10)} to {span.stop.slice(0, 10)} (UTC). 12 ready-made sites.</p>}
             </form>
+            <CustomPoint sites={sites} onOpen={(id) => onGo({ site: id, date: d.date, hours: d.hours }, "plan")} onComputed={onCustomSite} />
           </div>
           <div className="hero2-right">
             <p className="scene-tag mono">Interactive lunar scene · real NASA relief</p>

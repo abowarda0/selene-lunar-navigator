@@ -29,6 +29,8 @@ const cache = new WeakMap<YearData, VisWindow[]>();
 
 /** Windows when any part of Earth is above the skyline, over the whole year file. */
 export function earthViewWindows(year: YearData): VisWindow[] {
+  // Custom points carry the pipeline's own minute-accurate windows; use them as they are.
+  if (year.windows.earth_view) return [...year.windows.earth_view];
   const hit = cache.get(year);
   if (hit) return hit;
   const tr = year.track;

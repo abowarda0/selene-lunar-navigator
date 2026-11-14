@@ -118,6 +118,12 @@ def skyline(site_id: str, obs_height_m: float = OBS_HEIGHT_M) -> tuple[dict, lis
         return {"az": [k * SKY_STEP_DEG for k in range(n)], "elev": [0.0] * n, "dist_m": [0.0] * n, "sources": ["smooth Moon"]}, []
     wins = [fine_window(d, cfg["lat"], cfg["lon_e"], site_id) for d, *_ in cfg["near"]]
     layers = [Layer(w.sample_latlon, lo, hi, st) for w, (_, lo, hi, st) in zip(wins, cfg["near"])]
+    if cfg["far"] is None:
+        # No far layer (custom points between 60 and 80.5 deg S): the skyline stops where the near maps end.
+        log.info("%s: skyline at %.2f° from %d layers (no far layer)", site_id, SKY_STEP_DEG, len(layers))
+        prof = layered_horizon(layers, cfg["lat"], cfg["lon_e"], obs_height_m, SKY_STEP_DEG)
+        prof["sources"] = [f"LOLA {d.product.upper()} to {hi / 1000:.0f} km" for d, _, hi, _ in cfg["near"]]
+        return prof, wins
     if isinstance(cfg["far"], FineDem):
         far_win = fine_window(cfg["far"], cfg["lat"], cfg["lon_e"], site_id)
         far, far_scale, far_name = far_win.sample_latlon, cfg["far"].scale_m, cfg["far"].product.upper()

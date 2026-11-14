@@ -90,7 +90,7 @@ export function PlanPage({ sites, plan, onPlan, lander, onLander, onFindGood, in
 
   const slipControls = <SlipInput slip={slip} onSlip={setSlip} />;
   const slipBlock = slip > 0 && slipRows && (
-    <SlipCompare slip={slip} planned={slipRows.planned} slipped={slipRows.slipped} plannedStart={plannedStart} slippedStart={touchdown}
+    <SlipCompare slip={slip} planned={slipRows.planned} slipped={slipRows.slipped} plannedStart={plannedStart} slippedStart={touchdown} year={y}
       onAdopt={() => { onPlan({ date: active.date, time: active.time }); setSlip(0); }}
       onFindGood={() => onFindGood(touchdown)} />
   );

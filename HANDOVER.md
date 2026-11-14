@@ -39,6 +39,9 @@ cd spike && python3 -m pytest -q --cov=lunar                          # 85 tests
 
 **3D needs WebGL.** Use normal Chrome, Edge or Firefox. If WebGL is off, Home falls back to a flat polar map, and the 3D card shows a message instead.
 
+### Optional: custom coordinates
+`python -m pip install -r server/requirements.txt`, then `python server/point_server.py` from the repo root, next to `npm run dev`. Details in `server/README.md`.
+
 ### Optional: Luna's AI answers (free Gemini)
 Put the key in `server/.env` as `GEMINI_API_KEY=...` (git-ignored), then run `node server/assistant.mjs` from the repo root, next to `npm run dev`.
 
@@ -158,7 +161,7 @@ These came out of reviews with the owner. Keep them unless you agree a change wi
 1. **Gemini key:** Luna's free-text answers need a key (section 2). Not tested with a real key yet.
 2. **Official region outlines:** download `A3_9regions-lonlat-simplified.zip` (622 KB) from the USGS ScienceBase item for DOI 10.5066/P1MEQ6UK (it needs a browser "verify you are human" click). Check each sample point falls inside its region, and re-pick any that don't (`pick_sites.py`). Our points come from LROC mosaic centres, so they're close but not proven to be inside.
 3. **Re-validate the current engine** against NASA's maps (section 4 gap).
-4. **Custom coordinates:** needs a small backend that runs the pipeline for one point (about 1.5–2 min the first time, then cached). Today only the 12 precomputed sites work, and the app says so.
+4. **Custom coordinates:** done on branch `custom-points` (see 9c). Still open: host `server/point_server.py` somewhere for the judges, and a north-polar terrain option.
 5. **Deploy** (section 9).
 6. **Clean-up:** `web/public/data/scenario_*.json` (660 files, 76 MB) and `sweep_*.json` are no longer used by the app and can be deleted, which roughly halves the data size. `year_nobile_rim.json` is a stale leftover from an old site id. `three` makes the JS bundle 744 KB, so consider code-splitting the 3D views.
 7. **Phone layout** is not tested.
@@ -193,6 +196,19 @@ Review fixes before submission. All web tests, the typecheck and the build pass.
 - **Luna AI:** key read from `server/.env` (git-ignored); default model `gemini-3.5-flash-lite` (about 2 s; `gemini-2.0-flash` is retired and the larger Flash models are too slow); rate-limit table no longer grows forever; `TRUST_PROXY=1` for hosting behind a proxy.
 - Older docs moved to `docs/archive/`.
 - **Calendar picker:** the date fields have a calendar button; the field still shows ISO `YYYY-MM-DD`. An empty or invalid date hides the Home answer and disables Run analysis.
+
+## 9c. Custom coordinates (branch `custom-points`)
+- Home → **Have your own coordinates?** reads a latitude/longitude (signed or N/S/E/W), says what terrain that latitude gets, and **Compute this point** runs the real pipeline through `server/point_server.py` with a 7-step progress bar. When done the point joins the site list (tag "your point") and every page works for it: Plan, 3D, terrain map, Best dates, Best sites, Compare.
+- Same engine as the ready-made sites (`server/point_builder.py` reuses `spike/build_dataset.py`): whole-disc Sun rule, DSN two-way link, LOLA layered skyline. Custom points also carry the pipeline's minute-accurate **Earth in view** windows.
+- Terrain: south of 80.5° S full polar layers; 60–80.5° S LOLA 60 m to 30 km; elsewhere smooth Moon (labelled). `build_dataset.skyline` now accepts a site with no far layer.
+- While a point computes, the panel lists the 3 nearest ready-made sites with distances; a point within 0.5 km of one is that site. If the point server is not running, the panel says so.
+- How to run it, the API and limits: `server/README.md`. Python packages: `server/requirements.txt`.
+- **Validated (14 Nov 2026):** three ready-made sites recomputed as custom points at their exact coordinates. Mons Mouton Plateau (full polar terrain) and Apollo 11 (smooth Moon): every Sun, DSN-link, listen-only and 10 m-mast window identical to the minute, skyline within 0.001°, same slope. Chandrayaan-3 (69° S, custom points get terrain to 30 km only): skyline differs by up to 0.87° in some directions, but every window is still identical. The app gives the same verdict on all 3,699 site × landing-day × length checks (7, 14, 30 days), and the same 72 h overlap (0.00 h difference over 1,275 landings). First run: 140–220 s per point.
+
+## 9d. Launch slip: the first 72 hours (branch `custom-points`)
+- The slip panel now answers the team's promise: hours of simultaneous sunlight (power) and Earth (comms) gained or lost in the first 72 h after touchdown, and why. Headline ("A 24 h delay loses 24.0 h of power + comms overlap in the first 72 h (70.4 → 46.4 h)"), a **Why** line, planned / late / difference figures, and two bars on a 0–72 h axis with lost (red, dashed) and gained (green) hours and the Sun and Earth strips under each bar.
+- **Earth = Line of sight** (default, as the promise says) or **DSN link**; the other one is shown as a second figure. Changes shorter than 15 min (dish hand-overs, ±15 min line-of-sight edges) are not counted.
+- Logic in `lib/overlap72.ts` (tested), view in `selene/SlipOverlap.tsx`. Good demo: Mons Mouton Plateau, 22 Jun 2027, +24 h (Sun-caused); Malapert Massif, 21 Mar 2027, +24 h (Earth-caused).
 
 ## 10. Data sources (cite these)
 - JPL Horizons API (DE441), ssd.jpl.nasa.gov.

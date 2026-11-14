@@ -1,0 +1,4 @@
+# Custom-point service (server/point_server.py + point_builder.py). Python 3.11+.
+numpy>=1.26
+matplotlib>=3.8      # shaded terrain map image
+truststore>=0.9      # optional: use the OS certificate store (NASA PDS fails with Python's own bundle on some machines)
